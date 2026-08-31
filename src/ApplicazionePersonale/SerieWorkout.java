@@ -37,7 +37,11 @@ public class SerieWorkout {
     }
 
     public void setKg(double kg) {
-
+    	
+    	 if (kg < 0) {
+             throw new IllegalArgumentException(
+                     "I kg utilizzati devono essere almeno zero e cioè il peso corporeo");
+         }
         this.kg = kg;
     }
 }

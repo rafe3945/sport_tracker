@@ -1,6 +1,7 @@
 package ApplicazionePersonale;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Exercise {
@@ -30,10 +31,8 @@ public class Exercise {
     }
 
     public List<SerieWorkout> getSerie() {
-        return serie;
+        return Collections.unmodifiableList(serie);
     }
 
-    public void setSerie(List<SerieWorkout> serie) {
-        this.serie = serie;
-    }
+   
 }

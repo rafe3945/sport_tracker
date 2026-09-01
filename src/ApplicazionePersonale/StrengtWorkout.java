@@ -1,7 +1,7 @@
 package ApplicazionePersonale;
 
+	import java.time.LocalDate;
 	import java.util.List;
-
 	import java.util.Collections;
 	import java.util.ArrayList;
 
@@ -9,7 +9,7 @@ package ApplicazionePersonale;
 		
 		private	List<Exercise> esercizi;
 
-		public StrengtWorkout(String id, String data, int durata) {
+		public StrengtWorkout(String id, LocalDate data, int durata) {
 			super(id, data, durata);
 			this.esercizi=new ArrayList<>();
 			

@@ -1,15 +1,16 @@
 package ApplicazionePersonale;
+import java.time.LocalDate;
 
 public class Workout {
 
     private String id;
 
-    private String data;
+    private LocalDate data;
 
 
     private int durata; // in minuti
 
-    public Workout(String id, String data, int durata) {
+    public Workout(String id, LocalDate data, int durata) {
 
         this.id = id;
         this.data = data;
@@ -29,11 +30,11 @@ public class Workout {
         this.id = id;
     }
 
-    public String getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 

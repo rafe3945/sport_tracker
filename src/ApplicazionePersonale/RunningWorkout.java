@@ -1,10 +1,10 @@
 package ApplicazionePersonale;
-
+import java.time.LocalDate;
 public class RunningWorkout extends Workout {
 
     private double distanza;
 
-    public RunningWorkout(String id, String data, int durata, double distanza) {
+    public RunningWorkout(String id, LocalDate data, int durata, double distanza) {
 
         super(id, data,durata);
 

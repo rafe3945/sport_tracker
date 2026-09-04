@@ -148,7 +148,7 @@ public class SportTrackerApp {
 	    			break;
 	    			
 	    		case 3:
-	    			System.out.println("Operazione annullata");
+	    			System.out.println("Operazione annullata\n");
 	    			break;
 	    			
 	    		default:

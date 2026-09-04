@@ -55,6 +55,33 @@ public class WorkoutManager {
 		}
 		return tempo;
 	}
+	public int getNumeroCorse() {
+		int numCorse=0;
+		for(Workout workout:workouts) {
+			if(workout instanceof RunningWorkout) {
+				numCorse++;
+			}
+		}
+		return numCorse;
+	}
+	
+	public double getPassoMedioTotale() {
+		double distanza=0;
+		int durata=0;
+		for(Workout workout: workouts) {
+			if(workout instanceof RunningWorkout) {
+				distanza+=((RunningWorkout)workout).getDistanza();
+				durata+=workout.getDurata();
+			}
+		}
+		if(distanza == 0) {
+		    return 0;
+		}
+		// aggiungere a sporttrackerapp l'if con else if per mostrare che all'utente che non ci sono corse 
+		
+		double passo=durata/distanza; // min/km
+		return passo;
+	}
 	
 	public int getTempoTotaleForza() {
 		int tempo=0;
@@ -64,5 +91,41 @@ public class WorkoutManager {
 			}
 		}
 		return tempo;
+	}
+	
+	public int getNumeroAllenamentiForza() {
+		int allenamenti=0;
+		for(Workout workout:workouts) {
+			if(workout instanceof StrengtWorkout) {
+				allenamenti++;
+			}
+		}
+		return allenamenti;
+	}
+	
+	public int getNumeroEserciziForza() {
+		int numEsercizi=0;
+		
+		for(Workout workout:workouts) {
+			if(workout instanceof StrengtWorkout) {
+				numEsercizi+=((StrengtWorkout)workout).getEsercizi().size();
+			}
+		}
+		return numEsercizi;
+	}
+	
+	public int getNumeroSerieEsercizio(String nomeEsercizio) {
+	    int numSerieEsercizio=0;
+	    
+	    for(Workout workout:workouts) {
+	    	if(workout instanceof StrengtWorkout){
+	    		for(Exercise exercise:((StrengtWorkout)workout).getEsercizi()) {
+	    			if(nomeEsercizio.equalsIgnoreCase(exercise.getNome())) {
+	    				numSerieEsercizio+=exercise.getSerie().size();
+	    			}
+	    		}
+	    	}
+	    }
+	    return numSerieEsercizio;  // gestire messaggio per utente se non ci sono esercizi con il nome dato
 	}
 }

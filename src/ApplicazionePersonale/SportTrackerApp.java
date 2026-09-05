@@ -157,8 +157,59 @@ public class SportTrackerApp {
 	    		
 	    		break;
 	    		
+	    		//gestione sstatistiche
 	    	case 2:
-	    		//vedi statistichde
+	    		
+	    	    boolean continuaStatistiche = true;
+
+	    	    while(continuaStatistiche) {
+
+	    	        System.out.println();
+	    	        System.out.println("===== STATISTICHE =====");
+	    	        System.out.println("1. Statistiche corsa");
+	    	        System.out.println("2. Statistiche forza");
+	    	        System.out.println("3. Torna al menu principale\n");
+
+	    	        int sceltaStatistiche = scan.nextInt();
+
+	    	        switch(sceltaStatistiche) {
+
+	    	        	//stats corsa
+	    	            case 1:
+	    	            	if(manager.getNumeroCorse()==0) {
+	    	            		System.out.println("Attualmente non sono presenti allenamenti di corsa.");
+	    	            	}else {
+	    	            	System.out.println("Hai effettuato: "+ manager.getNumeroCorse()+ " corse");
+	    	            	System.out.println("Hai corso un totale di: "+ manager.getKmTotali()+ " km");
+	    	            	System.out.printf("Hai corso un totale di: %d minuti, che corrispondono a %.2f ore%n", manager.getTempoTotaleCorsa(),(double) manager.getTempoTotaleCorsa() / 60+"\n");
+	    	            	System.out.println("Il tuo passo medio di corsa è: "+ manager.getPassoMedioTotale()+ " min/km");
+	    	            	}
+	    	                break;
+
+	    	            // statistiche forza
+	    	            case 2:
+	    	                
+	    	            	if(manager.getNumeroAllenamentiForza()==0) {
+	    	            		System.out.println("Non sono presenti allenamenti");
+	    	            	}else {
+	    	            		
+	    	            		System.out.println("===== STATISTICHE FORZA =====");
+	    		    	        System.out.println("1. Statistiche generali");
+	    		    	        System.out.println("2. Statistiche su un determinato esercizio");
+	    		    	        System.out.println("3. Torna indietro\n");
+	    	            		
+	    	            	}
+	    	                break;
+
+	    	            case 3:
+	    	                continuaStatistiche = false;
+	    	                break;
+
+	    	            default:
+	    	                System.out.println("Scelta non valida.");
+	    	        }
+	    	    }
+	    	    
 	    		break;
 	    	
 	    	case 3:

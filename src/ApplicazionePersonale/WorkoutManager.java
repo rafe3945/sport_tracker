@@ -23,16 +23,6 @@ public class WorkoutManager {
 		return workouts.size();
 	}
 	
-	public int getCorseTotali() {
-		int count=0;
-		
-		for(Workout workout:workouts) {
-			if(workout instanceof RunningWorkout) {
-				count++;
-			}
-		}
-		return count;
-	}
 	
 	public double getKmTotali() {
 		double kmCorsi=0;
@@ -55,6 +45,7 @@ public class WorkoutManager {
 		}
 		return tempo;
 	}
+	
 	public int getNumeroCorse() {
 		int numCorse=0;
 		for(Workout workout:workouts) {
@@ -77,8 +68,7 @@ public class WorkoutManager {
 		if(distanza == 0) {
 		    return 0;
 		}
-		// aggiungere a sporttrackerapp l'if con else if per mostrare che all'utente che non ci sono corse 
-		
+
 		double passo=durata/distanza; // min/km
 		return passo;
 	}
@@ -126,6 +116,29 @@ public class WorkoutManager {
 	    		}
 	    	}
 	    }
-	    return numSerieEsercizio;  // gestire messaggio per utente se non ci sono esercizi con il nome dato
+	    return numSerieEsercizio;  
+	}
+	
+	public String getEsercizioPiuRep() {
+		
+		int ripetizioniEsercizio=0;
+		int maxRipetizioni=0;
+		String nomeEsPiuRep = null;
+		for(Workout workout:workouts) {
+			if(workout instanceof StrengtWorkout) {
+				
+				for(Exercise es:((StrengtWorkout) workout).getEsercizi()) {
+					ripetizioniEsercizio=0;
+					for(SerieWorkout serie: es.getSerie()) {
+						ripetizioniEsercizio+=serie.getRipetizioniXSerie();
+					}
+					if(ripetizioniEsercizio>maxRipetizioni) {
+						maxRipetizioni=ripetizioniEsercizio;
+						nomeEsPiuRep=es.getNome();
+					}
+				}
+			}
+		}
+		return nomeEsPiuRep;
 	}
 }

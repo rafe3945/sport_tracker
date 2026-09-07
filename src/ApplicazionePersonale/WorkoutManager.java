@@ -119,6 +119,24 @@ public class WorkoutManager {
 	    return numSerieEsercizio;  
 	}
 	
+	
+	public int getNumeroRipetizioniEsercizio(String nomeEs) {
+		int numeroRepEsercizio=0;
+		
+		for(Workout workout:workouts) {
+			if(workout instanceof StrengtWorkout){
+				for(Exercise exercise:((StrengtWorkout)workout).getEsercizi()) {
+					if(nomeEs.equalsIgnoreCase(exercise.getNome())) {
+						for(SerieWorkout serie : exercise.getSerie()) {
+							numeroRepEsercizio+=serie.getRipetizioniXSerie();
+						}
+					}
+				}
+			}
+		}
+		return numeroRepEsercizio;
+	}
+	
 	public String getEsercizioPiuRep() {
 		
 		int ripetizioniEsercizio=0;
@@ -140,5 +158,36 @@ public class WorkoutManager {
 			}
 		}
 		return nomeEsPiuRep;
+	}
+	
+	public int getMaxRipetizioni() {
+
+	    int ripetizioniEsercizio = 0;
+	    int maxRipetizioni = 0;
+
+	    for(Workout workout : workouts) {
+
+	        if(workout instanceof StrengtWorkout) {
+
+	            for(Exercise es : ((StrengtWorkout) workout).getEsercizi()) {
+
+	                ripetizioniEsercizio = 0;
+
+	                for(SerieWorkout serie : es.getSerie()) {
+
+	                    ripetizioniEsercizio += serie.getRipetizioniXSerie();
+
+	                }
+
+	                if(ripetizioniEsercizio > maxRipetizioni) {
+
+	                    maxRipetizioni = ripetizioniEsercizio;
+
+	                }
+	            }
+	        }
+	    }
+
+	    return maxRipetizioni;
 	}
 }

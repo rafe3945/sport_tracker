@@ -147,7 +147,7 @@ public class SportTrackerApp {
 	    			
 	    			break;
 	    			
-	    		case 3:
+	    		case 3: //case 3 dell'inseirmento esercizio
 	    			System.out.println("Operazione annullata\n");
 	    			break;
 	    			
@@ -193,15 +193,78 @@ public class SportTrackerApp {
 	    	            		System.out.println("Non sono presenti allenamenti");
 	    	            	}else {
 	    	            		
+	    	            		boolean continuaStatsForza=true;
+	    	            		
+	    	            		while(continuaStatsForza) {
 	    	            		System.out.println("===== STATISTICHE FORZA =====");
 	    		    	        System.out.println("1. Statistiche generali");
 	    		    	        System.out.println("2. Statistiche su un determinato esercizio");
 	    		    	        System.out.println("3. Torna indietro\n");
-	    	            		
+	    		    	        
+	    		    	        int sceltaStatsForza=scan.nextInt();
+	    		    	        
+	    		    	        switch(sceltaStatsForza) {
+	    		    	        
+
+	    		    	        case 1: //case 1 stats forza
+	    		    	        	System.out.println("=====STATISTICHE GENERALI=====");
+	    		    	        	System.out.println("Hai effettutato un numero di "+ manager.getAllenamentiTotali()+" allenamenti");
+	    		    	        	System.out.printf("Ti sei allenato per un totale di: %d minuti, che corrispondono a %.2f ore%n", manager.getTempoTotaleForza(),(double) manager.getTempoTotaleForza() / 60+"\n");
+	    		    	        	System.out.println("Hai svolto un totale di "+ manager.getNumeroEserciziForza()+ " esercizi");
+	    		    	        	System.out.println("L'esercizio con più ripetizioni è: "+manager.getEsercizioPiuRep()+" con "+ manager.getMaxRipetizioni()+ " ripetizioni" );
+	    		    	        	
+	    		    	        	break;
+	    		    	        
+	    		    	        case 2: //case 2 stats forza
+	    		    	        	scan.nextLine();
+	    		    	        	boolean continuaACercare=true;
+	    		    	        	while(continuaACercare) {
+	    		    	        	System.out.println("=====STATISTICHE PER SINGOLO ESERCIZIO=====");
+	    		    	        	System.out.println("Inserisci il nome dell'esercizio di cui vuoi vedere le statistiche");
+	    		    	        	String nomeEsercizioUtente=scan.nextLine();
+	    		    	        	if(manager.getNumeroSerieEsercizio(nomeEsercizioUtente)==0) {
+	    		    	        		System.out.println("Non hai mai svolto questo esercizio o hai digitato male il nome,riprova");
+	    		    	        	}else {
+	    		    	        		
+	    		    	        		System.out.println("Esercizio: "+ nomeEsercizioUtente);
+	    		    	        		System.out.println("Numero di serie totali: " +manager.getNumeroSerieEsercizio(nomeEsercizioUtente));
+	    		    	        		System.out.println("Numero di ripetizioni totali: " + manager.getNumeroRipetizioniEsercizio(nomeEsercizioUtente));
+	    		    	        		
+	    		    	        	}
+	    		    	        	boolean sceltaValidaSiNo=false;
+	    		    	        	while(!sceltaValidaSiNo) {
+	    		    	        	System.out.println("Voui cercare un nuovo esercizio");
+	    		    	        	System.out.println("1) Si");
+	    		    	        	System.out.println("2) No");
+	    		    	        	
+	    		    	        	int sceltaUtenteCercaAncora=scan.nextInt();
+	    		    	        	
+	    		    	        	if(sceltaUtenteCercaAncora==1) {
+	    		    	        		sceltaValidaSiNo=true;
+	    		    	        		 scan.nextLine();
+	    		    	        	}else if(sceltaUtenteCercaAncora==2) {
+	    		    	        		continuaACercare = false;
+	    		    	        		sceltaValidaSiNo=true;
+	    		    	        	}else {
+	    		    	        		System.out.println("Scelta non valida");
+	    		    	        	   }
+	    		    	        	  }
+	    		    	        	 }
+	    		    	        	
+	    		    	        	break;
+	    		    	        	
+	    		    	        case 3: // case 3 di statistiche forza
+	    		    	        	break;
+	    		    	        	
+	    		    	        default:
+	    		    	        	System.out.println("Scelta non valida");
+	    		    	          }
+	    	            		}
+	    		    	        
 	    	            	}
 	    	                break;
 
-	    	            case 3:
+	    	            case 3: //case 3 inserimento esercizip
 	    	                continuaStatistiche = false;
 	    	                break;
 

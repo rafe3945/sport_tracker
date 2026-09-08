@@ -73,80 +73,188 @@ public class SportTrackerApp {
 	    			break;
 	    		
 	    			//gestisco allenmaneto di forza(esercizi palestra o corpo libero)
-	    		case 2:
-	    			
-	    			scan.nextLine();
-	    			System.out.print("Inserisci l'id con cui memorizzare l'allenamento: ");
-	    			String id1=scan.nextLine();
-	    			
-	    			DateTimeFormatter formatoData1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-	    			LocalDate data1;
-	    			while(true) {
-	    			System.out.print("Inserisci data (gg/mm/aaaa): ");
-	    			try {
-	    			data1 = LocalDate.parse(scan.nextLine(), formatoData1);
-	    			break;
-	    			}catch(DateTimeParseException e) {
-	    				System.out.println("Formato data non valido. Riprova!");
-	    			}
-	    			}
-	    			
-	    			System.out.print("Inserisci la durata in minuti: ");
-	    			int durata1=scan.nextInt();
-	    			scan.nextLine();
-	    			
-	    			StrengtWorkout forza = new StrengtWorkout(id1, data1, durata1);
-	    			boolean continua=true;
 	    		
-	    			while(continua) {
-	    				System.out.println("Inserisci nome esercizio");
-	    				String nomeEs= scan.nextLine();
-	    				
-	    				Exercise esercizio = new Exercise(nomeEs);
-	    				System.out.println("Quante serie dell'esercizio vuoi inserire?");
-	    				int numeroSerie= scan.nextInt();
-	    				
-	    				for(int i=1; i<=numeroSerie; i++) {
-	    					
-	    					System.out.println("Serie "+ i);
-	    					
-	    					System.out.print("Ripetizioni "+i+": ");
-	    					int ripetizioni= scan.nextInt();
-	    					
-	    					System.out.print("Kg:");
-	    					double kg=scan.nextDouble();
-	    					
-	    					SerieWorkout serie = new SerieWorkout(ripetizioni, kg);
-	    					esercizio.aggiungiSerie(serie);
-	    				}
-	    				//chiedo se voglio aggiungere altro esericizio
-	    				
-	    				while(true) {
-	    					System.out.println("Vuoi aggiungere un altro esercizio?");
+	    			
+	    		case 2:
+
+	    		    scan.nextLine();
+
+	    		    System.out.print("Inserisci l'id con cui memorizzare l'allenamento: ");
+
+	    		    String id1 = scan.nextLine();
+
+	    		    DateTimeFormatter formatoData1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+	    		    LocalDate data1;
+
+	    		    while(true) {
+
+	    		        System.out.print("Inserisci data (gg/mm/aaaa): ");
+
+	    		        try {
+
+	    		            data1 = LocalDate.parse(scan.nextLine(), formatoData1);
+
+	    		            break;
+
+	    		        } catch(DateTimeParseException e) {
+
+	    		            System.out.println("Formato data non valido. Riprova!");
+
+	    		        }
+
+	    		    }
+
+	    		    System.out.print("Inserisci la durata in minuti: ");
+
+	    		    int durata1 = scan.nextInt();
+
+	    		    scan.nextLine();
+
+	    		    StrengtWorkout forza = new StrengtWorkout(id1, data1, durata1);
+
+	    		    boolean continua = true;
+
+	    		    while(continua) {
+
+	    		        System.out.println("Inserisci nome esercizio");
+
+	    		        String nomeEs = scan.nextLine();
+
+	    		        Exercise esercizio = new Exercise(nomeEs);
+
+	    		        System.out.println("Quante serie dell'esercizio vuoi inserire?");
+
+	    		        int numeroSerie = scan.nextInt();
+
+	    		        System.out.println("Come viene svolto l'esercizio?");
+
+	    		        System.out.println("1) A ripetizioni");
+
+	    		        System.out.println("2) A tempo");
+
+	    		        System.out.println("3) A ripetizioni con tempo");
+
+	    		        int sceltaTipo = scan.nextInt();
+
+	    		        TipoSerie tipoSerie;
+
+	    		        switch(sceltaTipo) {
+
+	    		            case 1:
+
+	    		                tipoSerie = TipoSerie.RIPETIZIONI;
+
+	    		                break;
+
+	    		            case 2:
+
+	    		                tipoSerie = TipoSerie.TEMPO;
+
+	    		                break;
+
+	    		            case 3:
+
+	    		                tipoSerie = TipoSerie.RIPETIZIONI_CON_TEMPO;
+
+	    		                break;
+
+	    		            default:
+
+	    		                System.out.println("Scelta non valida.");
+
+	    		                continue;
+	    		        }
+
+	    		        for(int i = 1; i <= numeroSerie; i++) {
+
+	    		            System.out.println("Serie " + i);
+
+	    		            int ripetizioni;
+	    		            int durataSecondi;
+
+	    		            if(tipoSerie == TipoSerie.RIPETIZIONI) {
+
+	    		                System.out.print("Numero di ripetizioni: ");
+
+	    		                ripetizioni = scan.nextInt();
+
+	    		                durataSecondi = 0;
+
+	    		            } else if(tipoSerie == TipoSerie.TEMPO) {
+
+	    		                ripetizioni = 1;
+
+	    		                System.out.print("Durata della serie in secondi: ");
+
+	    		                durataSecondi = scan.nextInt();
+
+	    		            } else {
+
+	    		                System.out.print("Numero di ripetizioni: ");
+
+	    		                ripetizioni = scan.nextInt();
+
+	    		                System.out.print("Durata di ogni ripetizione in secondi: ");
+
+	    		                durataSecondi = scan.nextInt();
+	    		            }
+
+	    		            System.out.print("Kg: ");
+
+	    		            double kg = scan.nextDouble();
+
+	    		            SerieWorkout serie = new SerieWorkout(
+	    		                ripetizioni,
+	    		                durataSecondi,
+	    		                kg,
+	    		                tipoSerie
+	    		            );
+
+	    		            esercizio.aggiungiSerie(serie);
+	    		        }
+
+	    		        forza.aggiungiEsercizio(esercizio);
+
+	    		        // Chiedo se voglio aggiungere un altro esercizio
+	    		        while(true) {
+
+	    		            System.out.println("Vuoi aggiungere un altro esercizio?");
+
 	    		            System.out.println("1) Si");
+
 	    		            System.out.println("2) No");
 
 	    		            int aggiungi = scan.nextInt();
+
 	    		            scan.nextLine();
-	    		            
-	    		            if(aggiungi==1) {
-	    		            	break;
-	    		            }else if(aggiungi == 2) {
+
+	    		            if(aggiungi == 1) {
+
+	    		                break;
+
+	    		            } else if(aggiungi == 2) {
 
 	    		                continua = false;
+
 	    		                break;
 
 	    		            } else {
+
 	    		                System.out.println("Scelta non valida.");
+
 	    		            }
-	    				}
-	    			}
-	    			
-	    			manager.aggiungiWorkout(forza);
-	    			System.out.println("Allenamento di forza aggiunto con successo!");
-	    			
-	    			break;
-	    			
+
+	    		        }
+
+	    		    }
+
+	    		    manager.aggiungiWorkout(forza);
+
+	    		    System.out.println("Allenamento di forza aggiunto con successo!");
+
+	    		    break;
+	    	
 	    		case 3: //case 3 dell'inseirmento esercizio
 	    			System.out.println("Operazione annullata\n");
 	    			break;
@@ -275,8 +383,39 @@ public class SportTrackerApp {
 	    	    
 	    		break;
 	    	
+	    		//vedi allenamenti
 	    	case 3:
-	    		// vedi allenamenti
+	    	
+	    		if(manager.getAllenamentiTotali()==0) {
+	    			System.out.println("Non sono presenti allenamenti");
+	    		}else {
+	    			
+	    			for(Workout workout:manager.getWorkouts()) {
+	    				System.out.println("=====ALLENAMENTO=====");
+	    				System.out.println("Id: "+ workout.getId());
+	    				System.out.println("Data: " +workout.getData());
+	    				System.out.println("Durata: "+ workout.getDurata()+ " min");
+	    				
+	    				if(workout instanceof RunningWorkout) {
+	    					System.out.println("KM Percorsi: " +((RunningWorkout)workout).getDistanza());
+	    					System.out.println("Passo medio: "+((RunningWorkout)workout).getPassoMedio() );
+	    				}else if(workout instanceof StrengtWorkout) {
+	    					
+	    					for(Exercise es:((StrengtWorkout)workout).getEsercizi()) {
+	    						System.out.println("Esercizio: "+ es.getNome());
+	    						
+	    						for(SerieWorkout serie:es.getSerie()) {
+	    							System.out.println(serie);
+	    						}
+	    					}
+	    					
+	    				}
+	    			}
+	    			
+	    			
+	    		}
+	    		
+	    		
 	    		break;
 	    	
 	    	case 4: 

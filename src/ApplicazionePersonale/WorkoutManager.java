@@ -128,7 +128,8 @@ public class WorkoutManager {
 				for(Exercise exercise:((StrengtWorkout)workout).getEsercizi()) {
 					if(nomeEs.equalsIgnoreCase(exercise.getNome())) {
 						for(SerieWorkout serie : exercise.getSerie()) {
-							numeroRepEsercizio+=serie.getRipetizioniXSerie();
+							if(serie.getTipo()==TipoSerie.RIPETIZIONI|| serie.getTipo()==TipoSerie.RIPETIZIONI_CON_TEMPO) {}
+							numeroRepEsercizio+=serie.getRipetizioni();
 						}
 					}
 				}
@@ -148,7 +149,9 @@ public class WorkoutManager {
 				for(Exercise es:((StrengtWorkout) workout).getEsercizi()) {
 					ripetizioniEsercizio=0;
 					for(SerieWorkout serie: es.getSerie()) {
-						ripetizioniEsercizio+=serie.getRipetizioniXSerie();
+						if(serie.getTipo()==TipoSerie.RIPETIZIONI||serie.getTipo()==TipoSerie.RIPETIZIONI_CON_TEMPO) {
+						ripetizioniEsercizio+=serie.getRipetizioni();
+						}
 					}
 					if(ripetizioniEsercizio>maxRipetizioni) {
 						maxRipetizioni=ripetizioniEsercizio;
@@ -174,9 +177,9 @@ public class WorkoutManager {
 	                ripetizioniEsercizio = 0;
 
 	                for(SerieWorkout serie : es.getSerie()) {
-
-	                    ripetizioniEsercizio += serie.getRipetizioniXSerie();
-
+	                	if(serie.getTipo()==TipoSerie.RIPETIZIONI||serie.getTipo()==TipoSerie.RIPETIZIONI_CON_TEMPO) {
+	                    ripetizioniEsercizio += serie.getRipetizioni();
+	                		}
 	                }
 
 	                if(ripetizioniEsercizio > maxRipetizioni) {

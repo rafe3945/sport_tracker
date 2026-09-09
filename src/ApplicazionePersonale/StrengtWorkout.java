@@ -9,8 +9,8 @@ package ApplicazionePersonale;
 		
 		private	List<Exercise> esercizi;
 
-		public StrengtWorkout(String id, LocalDate data, int durata) {
-			super(id, data, durata);
+		public StrengtWorkout(String descrizione,String id, LocalDate data, int durata) {
+			super(descrizione,id, data, durata);
 			this.esercizi=new ArrayList<>();
 			
 		}

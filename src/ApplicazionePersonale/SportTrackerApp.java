@@ -46,8 +46,12 @@ public class SportTrackerApp {
 	    		// gestisco l'inserimento della corsa
 	    		case 1:
 	    			scan.nextLine();
+	    			
 	    			System.out.print("Inserisci l'id con cui memorizzare l'allenamento");
 	    			String id=scan.nextLine();
+	    			
+	    			System.out.println("Inserisci la descrizione dell'allenamento,altrimenti lasciare vuoto");
+	    			String descrizione=scan.nextLine();
 	    			
 	    			DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	    			LocalDate data;
@@ -67,24 +71,23 @@ public class SportTrackerApp {
 	    			System.out.print("Inserisci i km corsi");
 	    			double distanza=scan.nextDouble();
 	    			
-	    			RunningWorkout corsa=new RunningWorkout(id,data,durata,distanza);
+	    			RunningWorkout corsa=new RunningWorkout(descrizione,id,data,durata,distanza);
 	    			manager.aggiungiWorkout(corsa);
 	    			System.out.println("✓ Corsa aggiunta con successo!\n");
 	    			break;
 	    		
 	    			//gestisco allenmaneto di forza(esercizi palestra o corpo libero)
-	    		
-	    			
 	    		case 2:
 
 	    		    scan.nextLine();
 
 	    		    System.out.print("Inserisci l'id con cui memorizzare l'allenamento: ");
-
 	    		    String id1 = scan.nextLine();
+	    		    
+	    		    System.out.println("Inserisci la descrizione dell'allenamento,altrimenti lasciare vuoto");
+	    		    String descrizione1=scan.nextLine();
 
 	    		    DateTimeFormatter formatoData1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
 	    		    LocalDate data1;
 
 	    		    while(true) {
@@ -111,7 +114,7 @@ public class SportTrackerApp {
 
 	    		    scan.nextLine();
 
-	    		    StrengtWorkout forza = new StrengtWorkout(id1, data1, durata1);
+	    		    StrengtWorkout forza = new StrengtWorkout(descrizione1,id1, data1, durata1);
 
 	    		    boolean continua = true;
 
@@ -392,6 +395,12 @@ public class SportTrackerApp {
 	    			
 	    			for(Workout workout:manager.getWorkouts()) {
 	    				System.out.println("=====ALLENAMENTO=====");
+	    				if(workout.getDescrizione().isEmpty()) {
+	    				System.out.println("Descrizione: non inserita");
+	    				}
+	    				else {
+	    					System.out.println("Descrizione: "+ workout.getDescrizione());
+	    				}
 	    				System.out.println("Id: "+ workout.getId());
 	    				System.out.println("Data: " +workout.getData());
 	    				System.out.println("Durata: "+ workout.getDurata()+ " min");
@@ -415,11 +424,28 @@ public class SportTrackerApp {
 	    			
 	    		}
 	    		
-	    		
 	    		break;
-	    	
+	    		//esci dall'app
 	    	case 4: 
-	    		//esci dal menu
+	    		
+	    		scan.nextLine();
+	    		System.out.println("=====USCITA=====");
+	    		System.out.println("Sei sicuro di voler chiudere l'applicazione?");
+	    		System.out.println("1) No, continua a usare l'applicazione");
+	    		System.out.println("2) Si, chiudi l'applicazione");
+	    		
+	    		int sceltaChiusura=scan.nextInt();
+	    		
+	    		while(sceltaChiusura != 1 && sceltaChiusura != 2) {
+	    		    System.out.println("Scelta non valida, inserisci 1 oppure 2:");
+	    		    sceltaChiusura = scan.nextInt();
+	    		}
+
+	    		if(sceltaChiusura == 1) {
+	    		    scelta = 0;
+	    		} else {
+	    		    scelta = 4;
+	    		}
 	    		break;
 	    		
 	    	default:

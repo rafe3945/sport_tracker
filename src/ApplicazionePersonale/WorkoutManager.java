@@ -12,6 +12,9 @@ public class WorkoutManager {
 	}
 	
 	public void aggiungiWorkout(Workout workout) {
+		if(workout == null) {
+		    throw new IllegalArgumentException("Il workout non può essere nullo");
+		}
 		this.workouts.add(workout);
 	}
 
@@ -105,6 +108,10 @@ public class WorkoutManager {
 	}
 	
 	public int getNumeroSerieEsercizio(String nomeEsercizio) {
+		if(nomeEsercizio == null || nomeEsercizio.isBlank()) {
+		    throw new IllegalArgumentException("Il nome dell'esercizio non può essere vuoto");
+		}
+		
 	    int numSerieEsercizio=0;
 	    
 	    for(Workout workout:workouts) {
@@ -121,6 +128,9 @@ public class WorkoutManager {
 	
 	
 	public int getNumeroRipetizioniEsercizio(String nomeEs) {
+		if(nomeEs == null || nomeEs.isBlank()) {
+		    throw new IllegalArgumentException("Il nome dell'esercizio non può essere vuoto");
+		}
 		int numeroRepEsercizio=0;
 		
 		for(Workout workout:workouts) {
@@ -128,8 +138,10 @@ public class WorkoutManager {
 				for(Exercise exercise:((StrengtWorkout)workout).getEsercizi()) {
 					if(nomeEs.equalsIgnoreCase(exercise.getNome())) {
 						for(SerieWorkout serie : exercise.getSerie()) {
-							if(serie.getTipo()==TipoSerie.RIPETIZIONI|| serie.getTipo()==TipoSerie.RIPETIZIONI_CON_TEMPO) {}
-							numeroRepEsercizio+=serie.getRipetizioni();
+							if(serie.getTipo()==TipoSerie.RIPETIZIONI|| serie.getTipo()==TipoSerie.RIPETIZIONI_CON_TEMPO) {
+								numeroRepEsercizio+=serie.getRipetizioni();
+							}
+							
 						}
 					}
 				}

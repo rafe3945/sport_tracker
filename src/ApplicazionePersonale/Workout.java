@@ -27,7 +27,7 @@ public class Workout {
         } else {
             this.descrizione = descrizione;
         }
-        this.descrizione=descrizione;
+        
     }
     	
 
@@ -42,7 +42,6 @@ public class Workout {
 		    } else {
 		        this.descrizione = descrizione;
 		    }
-		this.descrizione = descrizione;
 	}
 
 

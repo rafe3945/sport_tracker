@@ -17,7 +17,7 @@ public class SerieWorkout {
         this.ripetizioni=ripetizioni;
         
         if(durata<0) {
-        	throw new IllegalArgumentException("Il tipo della serie non può essere nullo");
+        	throw new IllegalArgumentException("La durata della serie non può essere negativa");
         }
         this.durataSecondi=durata;
         

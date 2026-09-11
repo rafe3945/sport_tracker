@@ -53,23 +53,13 @@ public class SportTrackerApp {
 	    			System.out.println("Inserisci la descrizione dell'allenamento,altrimenti lasciare vuoto");
 	    			String descrizione=scan.nextLine();
 	    			
-	    			DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-	    			LocalDate data;
-	    			while(true) {
-	    			System.out.print("Inserisci data (gg/mm/aaaa): ");
-	    			try {
-	    			data = LocalDate.parse(scan.nextLine(), formatoData);
-	    			break;
-	    			}catch(DateTimeParseException e) {
-	    				System.out.println("Formato data non valido. Riprova!");
-	    			}
-	    			}
+	    			LocalDate data=inserisciData(scan);
 	    			
 	    			System.out.print("Inserisci la durata in minuti");
 	    			int durata=scan.nextInt();
 	    			
-	    			System.out.print("Inserisci i km corsi");
-	    			double distanza=scan.nextDouble();
+	    			scan.nextLine();
+	    			double distanza = inserisciDouble(scan, "Inserisci i km corsi: ");
 	    			
 	    			RunningWorkout corsa=new RunningWorkout(descrizione,id,data,durata,distanza);
 	    			manager.aggiungiWorkout(corsa);
@@ -87,27 +77,8 @@ public class SportTrackerApp {
 	    		    System.out.println("Inserisci la descrizione dell'allenamento,altrimenti lasciare vuoto");
 	    		    String descrizione1=scan.nextLine();
 
-	    		    DateTimeFormatter formatoData1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-	    		    LocalDate data1;
-
-	    		    while(true) {
-
-	    		        System.out.print("Inserisci data (gg/mm/aaaa): ");
-
-	    		        try {
-
-	    		            data1 = LocalDate.parse(scan.nextLine(), formatoData1);
-
-	    		            break;
-
-	    		        } catch(DateTimeParseException e) {
-
-	    		            System.out.println("Formato data non valido. Riprova!");
-
-	    		        }
-
-	    		    }
-
+	    		    LocalDate data1=inserisciData(scan);
+	    		    
 	    		    System.out.print("Inserisci la durata in minuti: ");
 
 	    		    int durata1 = scan.nextInt();
@@ -120,15 +91,27 @@ public class SportTrackerApp {
 
 	    		    while(continua) {
 
-	    		        System.out.println("Inserisci nome esercizio");
+	    		        String nomeEs;
+	    		        do {
+	    		            System.out.println("Inserisci nome esercizio");
+	    		            nomeEs = scan.nextLine();
 
-	    		        String nomeEs = scan.nextLine();
+	    		            if (nomeEs.isBlank()) {
+	    		                System.out.println("Il nome dell'esercizio non può essere vuoto.");
+	    		            }
+	    		        } while (nomeEs.isBlank());
 
 	    		        Exercise esercizio = new Exercise(nomeEs);
+       
+	    		        int numeroSerie;
+	    		        do {
+	    		            System.out.println("Quante serie dell'esercizio vuoi inserire?");
+	    		            numeroSerie = scan.nextInt();
 
-	    		        System.out.println("Quante serie dell'esercizio vuoi inserire?");
-
-	    		        int numeroSerie = scan.nextInt();
+	    		            if (numeroSerie <= 0) {
+	    		                System.out.println("Il numero di serie deve essere maggiore di zero.");
+	    		            }
+	    		        } while (numeroSerie <= 0);
 
 	    		        System.out.println("Come viene svolto l'esercizio?");
 
@@ -202,10 +185,8 @@ public class SportTrackerApp {
 
 	    		                durataSecondi = scan.nextInt();
 	    		            }
-
-	    		            System.out.print("Kg: ");
-
-	    		            double kg = scan.nextDouble();
+	    		            scan.nextLine();
+	    		            double kg = inserisciDouble(scan, "Inserisci i kg: ");
 
 	    		            SerieWorkout serie = new SerieWorkout(
 	    		                ripetizioni,
@@ -292,7 +273,7 @@ public class SportTrackerApp {
 	    	            	}else {
 	    	            	System.out.println("Hai effettuato: "+ manager.getNumeroCorse()+ " corse");
 	    	            	System.out.println("Hai corso un totale di: "+ manager.getKmTotali()+ " km");
-	    	            	System.out.printf("Hai corso un totale di: %d minuti, che corrispondono a %.2f ore%n", manager.getTempoTotaleCorsa(),(double) manager.getTempoTotaleCorsa() / 60+"\n");
+	    	            	System.out.printf("Hai corso un totale di: %d minuti, che corrispondono a %.2f ore%n", manager.getTempoTotaleCorsa(),(double) manager.getTempoTotaleCorsa() / 60);
 	    	            	System.out.println("Il tuo passo medio di corsa è: "+ manager.getPassoMedioTotale()+ " min/km");
 	    	            	}
 	    	                break;
@@ -319,11 +300,16 @@ public class SportTrackerApp {
 
 	    		    	        case 1: //case 1 stats forza
 	    		    	        	System.out.println("=====STATISTICHE GENERALI=====");
-	    		    	        	System.out.println("Hai effettutato un numero di "+ manager.getAllenamentiTotali()+" allenamenti");
-	    		    	        	System.out.printf("Ti sei allenato per un totale di: %d minuti, che corrispondono a %.2f ore%n", manager.getTempoTotaleForza(),(double) manager.getTempoTotaleForza() / 60+"\n");
+	    		    	        	System.out.println("Hai effettutato un numero di "+ manager.getNumeroAllenamentiForza()+" allenamenti");
+	    		    	        	System.out.printf("Ti sei allenato per un totale di: %d minuti, che corrispondono a %.2f ore%n", manager.getTempoTotaleForza(),(double) manager.getTempoTotaleForza() / 60);
 	    		    	        	System.out.println("Hai svolto un totale di "+ manager.getNumeroEserciziForza()+ " esercizi");
-	    		    	        	System.out.println("L'esercizio con più ripetizioni è: "+manager.getEsercizioPiuRep()+" con "+ manager.getMaxRipetizioni()+ " ripetizioni" );
+	    		    	        	String esercizioPiuRep = manager.getEsercizioPiuRep();
 	    		    	        	
+	    		    	        	if(esercizioPiuRep==null) {
+	    		    	        		System.out.println("Non ci sono esercizi con ripetizioni.");
+	    		    	        	}else {
+	    		    	        	System.out.println("L'esercizio con più ripetizioni è: "+manager.getEsercizioPiuRep()+" con "+ manager.getMaxRipetizioni()+ " ripetizioni\n" );
+	    		    	        	}
 	    		    	        	break;
 	    		    	        
 	    		    	        case 2: //case 2 stats forza
@@ -333,16 +319,20 @@ public class SportTrackerApp {
 	    		    	        	System.out.println("=====STATISTICHE PER SINGOLO ESERCIZIO=====");
 	    		    	        	System.out.println("Inserisci il nome dell'esercizio di cui vuoi vedere le statistiche");
 	    		    	        	String nomeEsercizioUtente=scan.nextLine();
-	    		    	        	if(manager.getNumeroSerieEsercizio(nomeEsercizioUtente)==0) {
+	    		    	        	if(nomeEsercizioUtente.isBlank()) {
+	    		    	        		System.out.println("Il nome dell'esercizio non può essere vuoto.");
+	    		    	        	}
+	    		    	        	else if(manager.getNumeroSerieEsercizio(nomeEsercizioUtente)==0) {
 	    		    	        		System.out.println("Non hai mai svolto questo esercizio o hai digitato male il nome,riprova");
 	    		    	        	}else {
 	    		    	        		
 	    		    	        		System.out.println("Esercizio: "+ nomeEsercizioUtente);
 	    		    	        		System.out.println("Numero di serie totali: " +manager.getNumeroSerieEsercizio(nomeEsercizioUtente));
-	    		    	        		System.out.println("Numero di ripetizioni totali: " + manager.getNumeroRipetizioniEsercizio(nomeEsercizioUtente));
+	    		    	        		System.out.println("Numero di ripetizioni totali: " + manager.getNumeroRipetizioniEsercizio(nomeEsercizioUtente)+"\n");
 	    		    	        		
 	    		    	        	}
 	    		    	        	boolean sceltaValidaSiNo=false;
+	    		    	        	scan.nextLine();
 	    		    	        	while(!sceltaValidaSiNo) {
 	    		    	        	System.out.println("Voui cercare un nuovo esercizio");
 	    		    	        	System.out.println("1) Si");
@@ -365,6 +355,7 @@ public class SportTrackerApp {
 	    		    	        	break;
 	    		    	        	
 	    		    	        case 3: // case 3 di statistiche forza
+	    		    	        	 continuaStatsForza = false;
 	    		    	        	break;
 	    		    	        	
 	    		    	        default:
@@ -451,7 +442,32 @@ public class SportTrackerApp {
 	    	default:
 	    		System.out.println("Scelta non valida, riprovare perfavore\n");
 	    }
-	    
-	}	
-   }
+	  }	
+    }
+	
+	private static LocalDate inserisciData(Scanner scan) {
+	    DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+	    while (true) {
+	        System.out.print("Inserisci data (gg/mm/aaaa): ");
+
+	        try {
+	            LocalDate data = LocalDate.parse(scan.nextLine(), formatoData);
+
+	            if (data.isAfter(LocalDate.now())) {
+	                System.out.println("La data non può essere futura. Riprova!");
+	            } else {
+	                return data;
+	            }
+
+	        } catch (DateTimeParseException e) {
+	            System.out.println("Formato data non valido. Riprova!");
+	        }
+	    }
+	}
+	private static double inserisciDouble(Scanner scan, String messaggio) {
+	    System.out.print(messaggio);
+	    String input = scan.nextLine().replace(',', '.');
+	    return Double.parseDouble(input);
+	}
 }

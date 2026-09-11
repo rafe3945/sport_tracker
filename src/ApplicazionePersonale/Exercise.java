@@ -11,7 +11,10 @@ public class Exercise {
     private List<SerieWorkout> serie;
 
     public Exercise(String nome) {
-
+    	
+    	if(nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("Il nome dell'esercizio non può essere vuoto");
+        }
         this.nome = nome;
 
         this.serie = new ArrayList<>();
@@ -27,6 +30,10 @@ public class Exercise {
     }
 
     public void setNome(String nome) {
+    	
+    	if(nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("Il nome dell'esercizio non può essere vuoto");
+        }
         this.nome = nome;
     }
 

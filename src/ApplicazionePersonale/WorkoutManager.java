@@ -150,6 +150,29 @@ public class WorkoutManager {
 		return numeroRepEsercizio;
 	}
 	
+	public int getTempoTotaleEsercizio(String nomeEs) {
+		if(nomeEs == null || nomeEs.isBlank()) {
+		    throw new IllegalArgumentException("Il nome dell'esercizio non può essere vuoto");
+		}
+		int tempo=0;
+		for(Workout workout:workouts) {
+			if(workout instanceof StrengtWorkout) {
+				for(Exercise exercise:((StrengtWorkout)workout).getEsercizi()) {
+					if(nomeEs.equalsIgnoreCase(exercise.getNome())) {
+						for(SerieWorkout serie : exercise.getSerie()) {
+							if(serie.getTipo()==TipoSerie.TEMPO) {
+								tempo+=serie.getDurataSecondi();
+							}else if(serie.getTipo()==TipoSerie.RIPETIZIONI_CON_TEMPO) {
+								tempo+=(serie.getRipetizioni()*serie.getDurataSecondi());
+							}
+						}
+					}
+				}
+			}
+		}
+		return tempo;
+	}
+	
 	public String getEsercizioPiuRep() {
 		
 		int ripetizioniEsercizio=0;

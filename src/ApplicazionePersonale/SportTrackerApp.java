@@ -274,7 +274,7 @@ public class SportTrackerApp {
 	    	            	System.out.println("Hai effettuato: "+ manager.getNumeroCorse()+ " corse");
 	    	            	System.out.println("Hai corso un totale di: "+ manager.getKmTotali()+ " km");
 	    	            	System.out.printf("Hai corso un totale di: %d minuti, che corrispondono a %.2f ore%n", manager.getTempoTotaleCorsa(),(double) manager.getTempoTotaleCorsa() / 60);
-	    	            	System.out.println("Il tuo passo medio di corsa è: "+ manager.getPassoMedioTotale()+ " min/km");
+	    	            	System.out.printf("Passo medio totale: %.2f min/km%n", manager.getPassoMedioTotale());
 	    	            	}
 	    	                break;
 
@@ -327,12 +327,21 @@ public class SportTrackerApp {
 	    		    	        	}else {
 	    		    	        		
 	    		    	        		System.out.println("Esercizio: "+ nomeEsercizioUtente);
-	    		    	        		System.out.println("Numero di serie totali: " +manager.getNumeroSerieEsercizio(nomeEsercizioUtente));
-	    		    	        		System.out.println("Numero di ripetizioni totali: " + manager.getNumeroRipetizioniEsercizio(nomeEsercizioUtente)+"\n");
 	    		    	        		
+	    		    	        	    int ripetizioniTotali = manager.getNumeroRipetizioniEsercizio(nomeEsercizioUtente);
+	    		    	        	    int tempoTotale = manager.getTempoTotaleEsercizio(nomeEsercizioUtente);
+	    		    	        		System.out.println("Numero di serie totali: " +manager.getNumeroSerieEsercizio(nomeEsercizioUtente));
+	    		    	        		
+	    		    	        		if(ripetizioniTotali>0) {
+	    		    	        			System.out.println("Numero di ripetizioni totali: " + ripetizioniTotali);
+	    		    	        		}
+	    		    	        		if(tempoTotale>0) {
+	    		    	        			System.out.println("Tempo totale: " + tempoTotale + " secondi");
+	    		    	        		}
+	    		    	        	    System.out.println();
 	    		    	        	}
 	    		    	        	boolean sceltaValidaSiNo=false;
-	    		    	        	scan.nextLine();
+	    		    	        	
 	    		    	        	while(!sceltaValidaSiNo) {
 	    		    	        	System.out.println("Voui cercare un nuovo esercizio");
 	    		    	        	System.out.println("1) Si");
@@ -346,6 +355,7 @@ public class SportTrackerApp {
 	    		    	        	}else if(sceltaUtenteCercaAncora==2) {
 	    		    	        		continuaACercare = false;
 	    		    	        		sceltaValidaSiNo=true;
+	    		    	        		scan.nextLine();
 	    		    	        	}else {
 	    		    	        		System.out.println("Scelta non valida");
 	    		    	        	   }

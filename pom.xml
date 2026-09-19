@@ -1,0 +1,24 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ApplicazionePersonale</groupId>
+    <artifactId>SportTracker</artifactId>
+    <version>1.0</version>
+     <properties>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>26.7.0</version>
+        </dependency>
+    </dependencies>
+    
+     <build>
+        <sourceDirectory>src</sourceDirectory>
+    </build>
+    
+</project>

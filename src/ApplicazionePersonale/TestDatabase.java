@@ -1,5 +1,5 @@
 package ApplicazionePersonale;
-import java.sql.Connection;
+import java.sql.Connection; 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,11 +9,7 @@ public class TestDatabase {
 	
 	public static void main(String[] args) throws SQLException {
 
-		Connection connection = DriverManager.getConnection(
-		        "jdbc:mysql://localhost:3306/sporttracker",
-		        "root",
-		        "Raffaele05@"
-		);
+		Connection connection = DatabaseConnection.getConnection();
 		System.out.println("Connessione riuscita!");
 		
 		Statement statement = connection.createStatement();

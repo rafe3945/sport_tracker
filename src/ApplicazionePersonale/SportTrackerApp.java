@@ -1,10 +1,11 @@
 package ApplicazionePersonale;
 
-import java.util.Scanner;
+import java.util.Scanner; 
 import java.util.ArrayList;
 import java.util.List;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class SportTrackerApp {
@@ -15,6 +16,7 @@ public class SportTrackerApp {
 		//creo il WorkoutManager
 	
 	WorkoutManager manager= new WorkoutManager();
+	WorkoutDAO dao= new WorkoutDAO();
 	
 		//creo il menu iniziale
 	int scelta = 0;
@@ -62,6 +64,13 @@ public class SportTrackerApp {
 	    			double distanza = inserisciDouble(scan, "Inserisci i km corsi: ");
 	    			
 	    			RunningWorkout corsa=new RunningWorkout(descrizione,id,data,durata,distanza);
+	    			try {
+	    			    dao.save(corsa);
+	    			} catch (SQLException e) {
+	    			    System.out.println("Errore durante il salvataggio nel database.");
+	    			    e.printStackTrace();
+	    			}
+	    			
 	    			manager.aggiungiWorkout(corsa);
 	    			System.out.println("✓ Corsa aggiunta con successo!\n");
 	    			break;

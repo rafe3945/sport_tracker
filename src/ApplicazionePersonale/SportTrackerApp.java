@@ -66,13 +66,13 @@ public class SportTrackerApp {
 	    			RunningWorkout corsa=new RunningWorkout(descrizione,id,data,durata,distanza);
 	    			try {
 	    			    dao.save(corsa);
+	    			    manager.aggiungiWorkout(corsa);
+		    			System.out.println("✓ Corsa aggiunta con successo!\n");
 	    			} catch (SQLException e) {
 	    			    System.out.println("Errore durante il salvataggio nel database.");
 	    			    e.printStackTrace();
 	    			}
 	    			
-	    			manager.aggiungiWorkout(corsa);
-	    			System.out.println("✓ Corsa aggiunta con successo!\n");
 	    			break;
 	    		
 	    			//gestisco allenmaneto di forza(esercizi palestra o corpo libero)
@@ -95,7 +95,7 @@ public class SportTrackerApp {
 	    		    scan.nextLine();
 
 	    		    StrengtWorkout forza = new StrengtWorkout(descrizione1,id1, data1, durata1);
-
+	    		    
 	    		    boolean continua = true;
 
 	    		    while(continua) {
@@ -111,7 +111,7 @@ public class SportTrackerApp {
 	    		        } while (nomeEs.isBlank());
 
 	    		        Exercise esercizio = new Exercise(nomeEs);
-       
+	    		        
 	    		        int numeroSerie;
 	    		        do {
 	    		            System.out.println("Quante serie dell'esercizio vuoi inserire?");
@@ -241,11 +241,15 @@ public class SportTrackerApp {
 	    		        }
 
 	    		    }
-
-	    		    manager.aggiungiWorkout(forza);
-
-	    		    System.out.println("Allenamento di forza aggiunto con successo!");
-
+	    		    
+	    		    try {
+						dao.save(forza);
+						 manager.aggiungiWorkout(forza);
+			    		    System.out.println("Allenamento di forza aggiunto con successo!");
+					} catch (SQLException e) {
+						System.out.println("Errore duranrte il salvataggio nel database");
+						e.printStackTrace();
+					}
 	    		    break;
 	    	
 	    		case 3: //case 3 dell'inseirmento esercizio

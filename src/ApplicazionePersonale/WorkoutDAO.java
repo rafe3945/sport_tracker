@@ -92,4 +92,93 @@ public class WorkoutDAO {
 		    }
 	}
 	
+	public int getNumeroCorse() throws SQLException{
+		String sql= "SELECT COUNT(*) FROM corse ";
+		try(Connection connection=DatabaseConnection.getConnection()){
+			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				try(ResultSet result= statement.executeQuery()){
+					result.next();
+					return result.getInt(1);
+				}	
+			}
+		}
+	}
+	
+	public double getKmTotali() throws SQLException {
+		String sql ="SELECT SUM(distanza) FROM corse";
+		try(Connection connection = DatabaseConnection.getConnection()){
+			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				try(ResultSet result = statement.executeQuery()){
+					result.next();
+					return result.getDouble(1);
+				}
+			}
+		}
+	}
+	
+	public int getTempoTotaleCorsa() throws SQLException {
+		String sql="SELECT SUM(durata) FROM corse";
+		
+		try(Connection connection = DatabaseConnection.getConnection()){
+			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				try(ResultSet result = statement.executeQuery()){
+					result.next();
+					return result.getInt(1);
+				}
+			}
+		}
+	}
+	
+	public double getPassoMedioTotale() throws SQLException{
+		String sql= "SELECT SUM(durata) / SUM(distanza) FROM corse";
+		
+		try(Connection connection = DatabaseConnection.getConnection()){
+			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				try(ResultSet result = statement.executeQuery()){
+					result.next();
+					return result.getDouble(1);
+				}
+			}
+		}
+	}
+	
+	public int getNumeroAllenamentiForza() throws SQLException {
+		String sql="SELECT COUNT(*) FROM allenamenti_forza";
+		
+		try(Connection connection = DatabaseConnection.getConnection()){
+			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				try(ResultSet result = statement.executeQuery()){
+					result.next();
+					return result.getInt(1);
+				}
+			}
+		}
+	}
+	
+	public int getTempoTotaleForza() throws SQLException{
+		String sql="SELECT SUM(durata) FROM allenamenti_forza";
+		
+		try(Connection connection = DatabaseConnection.getConnection()){
+			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				try(ResultSet result = statement.executeQuery()){
+					result.next();
+					return result.getInt(1);
+				}
+			}
+		}
+	}
+	
+	public int getNumeroEserciziForza() throws SQLException{
+		
+		String sql="SELECT COUNT(*) FROM esercizi_forza";
+		
+		try(Connection connection = DatabaseConnection.getConnection()){
+			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				try(ResultSet result = statement.executeQuery()){
+					result.next();
+					return result.getInt(1);
+				}
+			}
+		}
+	}
 }

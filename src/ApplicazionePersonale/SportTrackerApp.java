@@ -281,20 +281,31 @@ public class SportTrackerApp {
 
 	    	        	//stats corsa
 	    	            case 1:
-	    	            	if(manager.getNumeroCorse()==0) {
+						try {
+							int numeroCorse = dao.getNumeroCorse();
+							
+							if(numeroCorse==0) {
 	    	            		System.out.println("Attualmente non sono presenti allenamenti di corsa.");
 	    	            	}else {
-	    	            	System.out.println("Hai effettuato: "+ manager.getNumeroCorse()+ " corse");
-	    	            	System.out.println("Hai corso un totale di: "+ manager.getKmTotali()+ " km");
-	    	            	System.out.printf("Hai corso un totale di: %d minuti, che corrispondono a %.2f ore%n", manager.getTempoTotaleCorsa(),(double) manager.getTempoTotaleCorsa() / 60);
-	    	            	System.out.printf("Passo medio totale: %.2f min/km%n", manager.getPassoMedioTotale());
+	    	            	System.out.println("Hai effettuato: "+ numeroCorse + " corse");	
+	    	            	System.out.println("Hai corso un totale di: "+ dao.getKmTotali() + " km");
+	    	            	
+		    	        	int tempoTotaleCorsa=dao.getTempoTotaleCorsa();
+	    	            	System.out.printf("Hai corso un totale di: %d minuti, che corrispondono a %.2f ore%n", tempoTotaleCorsa,(double) tempoTotaleCorsa / 60);
+	    	            	System.out.printf("Passo medio totale: %.2f min/km%n", dao.getPassoMedioTotale());
 	    	            	}
+						} catch (SQLException e) {
+							System.out.println("Errore recupero dati nel database");
+							e.printStackTrace();
+						}
 	    	                break;
-
+	    	                
 	    	            // statistiche forza
 	    	            case 2:
-	    	                
-	    	            	if(manager.getNumeroAllenamentiForza()==0) {
+						try {
+							int allenamentiForza= dao.getNumeroAllenamentiForza();
+						
+	    	            	if(allenamentiForza==0) {
 	    	            		System.out.println("Non sono presenti allenamenti");
 	    	            	}else {
 	    	            		
@@ -313,9 +324,12 @@ public class SportTrackerApp {
 
 	    		    	        case 1: //case 1 stats forza
 	    		    	        	System.out.println("=====STATISTICHE GENERALI=====");
-	    		    	        	System.out.println("Hai effettutato un numero di "+ manager.getNumeroAllenamentiForza()+" allenamenti");
-	    		    	        	System.out.printf("Ti sei allenato per un totale di: %d minuti, che corrispondono a %.2f ore%n", manager.getTempoTotaleForza(),(double) manager.getTempoTotaleForza() / 60);
-	    		    	        	System.out.println("Hai svolto un totale di "+ manager.getNumeroEserciziForza()+ " esercizi");
+	    		    	        	System.out.println("Hai effettutato un numero di "+ allenamentiForza +" allenamenti");
+	    		    	        	
+	    		    	        	int tempoTotaleForza=dao.getTempoTotaleForza();
+	    		    	        	System.out.printf("Ti sei allenato per un totale di: %d minuti, che corrispondono a %.2f ore%n", tempoTotaleForza,(double) tempoTotaleForza / 60);
+	    		    	        	System.out.println("Hai svolto un totale di " + dao.getNumeroEserciziForza()+ " esercizi");
+	    		    	        	
 	    		    	        	String esercizioPiuRep = manager.getEsercizioPiuRep();
 	    		    	        	
 	    		    	        	if(esercizioPiuRep==null) {
@@ -388,8 +402,11 @@ public class SportTrackerApp {
 	    		    	        
 	    	            	}
 	    	                break;
-
-	    	            case 3: //case 3 inserimento esercizip
+						} catch (SQLException e) {
+							System.out.println("Errore nel recupero dati dal database");
+							e.printStackTrace();
+						}
+	    	            case 3: //case 3 statistiche
 	    	                continuaStatistiche = false;
 	    	                break;
 

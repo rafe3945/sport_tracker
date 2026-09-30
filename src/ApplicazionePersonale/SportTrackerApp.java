@@ -330,12 +330,14 @@ public class SportTrackerApp {
 	    		    	        	System.out.printf("Ti sei allenato per un totale di: %d minuti, che corrispondono a %.2f ore%n", tempoTotaleForza,(double) tempoTotaleForza / 60);
 	    		    	        	System.out.println("Hai svolto un totale di " + dao.getNumeroEserciziForza()+ " esercizi");
 	    		    	        	
-	    		    	        	String esercizioPiuRep = manager.getEsercizioPiuRep();
+	    		    	        	
+	    		    	        	//String esercizioPiuRep = manager.getEsercizioPiuRep();
+	    		    	        	String esercizioPiuRep= dao.getEsercizioPiuRep();
 	    		    	        	
 	    		    	        	if(esercizioPiuRep==null) {
 	    		    	        		System.out.println("Non ci sono esercizi con ripetizioni.");
 	    		    	        	}else {
-	    		    	        	System.out.println("L'esercizio con più ripetizioni è: "+manager.getEsercizioPiuRep()+" con "+ manager.getMaxRipetizioni()+ " ripetizioni\n" );
+	    		    	        	System.out.println("L'esercizio con più ripetizioni è: "+ esercizioPiuRep+" con "+ dao.getMaxRipetizioni()+ " ripetizioni\n" );
 	    		    	        	}
 	    		    	        	break;
 	    		    	        
@@ -346,18 +348,19 @@ public class SportTrackerApp {
 	    		    	        	System.out.println("=====STATISTICHE PER SINGOLO ESERCIZIO=====");
 	    		    	        	System.out.println("Inserisci il nome dell'esercizio di cui vuoi vedere le statistiche");
 	    		    	        	String nomeEsercizioUtente=scan.nextLine();
+	    		    	        	
+	    		    	        	int numeroSerie=dao.getNumeroSerieEsercizio(nomeEsercizioUtente);
 	    		    	        	if(nomeEsercizioUtente.isBlank()) {
 	    		    	        		System.out.println("Il nome dell'esercizio non può essere vuoto.");
 	    		    	        	}
-	    		    	        	else if(manager.getNumeroSerieEsercizio(nomeEsercizioUtente)==0) {
+	    		    	        	else if(numeroSerie==0) {
 	    		    	        		System.out.println("Non hai mai svolto questo esercizio o hai digitato male il nome,riprova");
 	    		    	        	}else {
-	    		    	        		
 	    		    	        		System.out.println("Esercizio: "+ nomeEsercizioUtente);
 	    		    	        		
 	    		    	        	    int ripetizioniTotali = manager.getNumeroRipetizioniEsercizio(nomeEsercizioUtente);
 	    		    	        	    int tempoTotale = manager.getTempoTotaleEsercizio(nomeEsercizioUtente);
-	    		    	        		System.out.println("Numero di serie totali: " +manager.getNumeroSerieEsercizio(nomeEsercizioUtente));
+	    		    	        		System.out.println("Numero di serie totali: " +numeroSerie);
 	    		    	        		
 	    		    	        		if(ripetizioniTotali>0) {
 	    		    	        			System.out.println("Numero di ripetizioni totali: " + ripetizioniTotali);

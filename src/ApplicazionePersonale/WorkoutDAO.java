@@ -181,4 +181,72 @@ public class WorkoutDAO {
 			}
 		}
 	}
+	
+	public String getEsercizioPiuRep() throws SQLException{
+		
+		String sql= "SELECT esercizi_forza.nome, SUM(serie_forza.ripetizioni) "
+				+ "FROM esercizi_forza "
+				+ "JOIN serie_forza "
+				+ "ON esercizi_forza.id=serie_forza.esercizio_id "
+				+ "GROUP BY esercizi_forza.nome "
+				+ "ORDER BY SUM(serie_forza.ripetizioni) DESC "
+				+ "LIMIT 1 ";
+			
+			try(Connection connection= DatabaseConnection.getConnection()){
+				try(PreparedStatement statement=connection.prepareStatement(sql)){
+					try(ResultSet result= statement.executeQuery()){
+						if(result.next()) {
+							return result.getString(1);
+						}else {
+							return null;
+						}
+					}
+				}
+			}	
+	    }
+	
+	
+	public int getMaxRipetizioni() throws SQLException {
+		String sql= "SELECT esercizi_forza.nome, SUM(serie_forza.ripetizioni) "
+				+ "FROM esercizi_forza "
+				+ "JOIN serie_forza "
+				+ "ON esercizi_forza.id=serie_forza.esercizio_id "
+				+ "GROUP BY esercizi_forza.nome "
+				+ "ORDER BY SUM(serie_forza.ripetizioni) DESC "
+				+ "LIMIT 1 ";
+		try(Connection connection= DatabaseConnection.getConnection()){
+			try(PreparedStatement statement=connection.prepareStatement(sql)){
+				try(ResultSet result= statement.executeQuery()){
+					 if(result.next()) {
+						return result.getInt(2);
+					 }else {
+						 return 0;
+					 }
+				}
+			}
+		}	
+	}
+	
+	public int getNumeroSerieEsercizio(String nomeEs) throws SQLException {
+		
+		String sql= "SELECT COUNT(*) "
+				+   "FROM esercizi_forza "
+				+   "JOIN serie_forza "
+				+   "ON esercizi_forza.id=serie_forza.esercizio_id "
+				+   "WHERE esercizi_forza.nome = ? ";
+		
+		try(Connection connection= DatabaseConnection.getConnection()){
+			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				statement.setString(1, nomeEs);
+				try(ResultSet result= statement.executeQuery()){
+					if(result.next()) {
+					return result.getInt(1);
+					}else {
+						return 0;
+					}
+				}	
+			}
+		}	
+	} 
+	
 }

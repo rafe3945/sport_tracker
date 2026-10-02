@@ -358,8 +358,11 @@ public class SportTrackerApp {
 	    		    	        	}else {
 	    		    	        		System.out.println("Esercizio: "+ nomeEsercizioUtente);
 	    		    	        		
-	    		    	        	    int ripetizioniTotali = manager.getNumeroRipetizioniEsercizio(nomeEsercizioUtente);
-	    		    	        	    int tempoTotale = manager.getTempoTotaleEsercizio(nomeEsercizioUtente);
+	    		    	        	    //int ripetizioniTotali = manager.getNumeroRipetizioniEsercizio(nomeEsercizioUtente);
+	    		    	        		int ripetizioniTotali=dao.getNumeroRipetizioniEsercizio(nomeEsercizioUtente);
+	    		    	        		
+	    		    	        	    //int tempoTotale = manager.getTempoTotaleEsercizio(nomeEsercizioUtente);
+	    		    	        		int tempoTotale = dao.getTempoTotaleEsercizio(nomeEsercizioUtente);
 	    		    	        		System.out.println("Numero di serie totali: " +numeroSerie);
 	    		    	        		
 	    		    	        		if(ripetizioniTotali>0) {

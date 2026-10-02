@@ -2,8 +2,11 @@ package ApplicazionePersonale;
 import java.sql.Connection; 
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
+import java.util.ArrayList;
 
 public class WorkoutDAO {
 
@@ -247,6 +250,80 @@ public class WorkoutDAO {
 				}	
 			}
 		}	
-	} 
+	}
+	
+	public int getNumeroRipetizioniEsercizio(String nomeEs) throws SQLException {
+		
+		if(nomeEs == null || nomeEs.isBlank()) {
+		    throw new IllegalArgumentException("Il nome dell'esercizio non può essere vuoto");
+		}
+		
+		String sql= "SELECT SUM(serie_forza.ripetizioni) "
+				+   "FROM esercizi_forza "
+				+   "JOIN serie_forza "
+				+   "ON esercizi_forza.id= serie_forza.esercizio_id "
+				+   "WHERE esercizi_forza.nome= ? "
+				+   "AND serie_forza.tipo IN ('RIPETIZIONI', 'RIPETIZIONI_CON_TEMPO') ";
+		
+		try(Connection connection = DatabaseConnection.getConnection()){
+			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				statement.setString(1, nomeEs);
+				try(ResultSet result = statement.executeQuery()){
+					result.next(); 
+					return result.getInt(1);
+				}
+			}
+		}	
+	}
+	
+	public int getTempoTotaleEsercizio(String nomeEs) throws SQLException {
+		
+		if(nomeEs == null || nomeEs.isBlank()) {
+		    throw new IllegalArgumentException("Il nome dell'esercizio non può essere vuoto");
+		}
+		
+		String sql= "SELECT SUM(serie_forza.durata_secondi) "
+				+   "FROM esercizi_forza "
+				+   "JOIN serie_forza "
+				+   "ON esercizi_forza.id= serie_forza.esercizio_id "
+				+   "WHERE esercizi_forza.nome= ? "
+				+   "AND serie_forza.tipo= 'TEMPO' ";
+		
+		try(Connection connection = DatabaseConnection.getConnection()){
+			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				statement.setString(1, nomeEs);
+				try(ResultSet result = statement.executeQuery()){
+					result.next(); 
+					return result.getInt(1);
+				}
+			}
+		}	
+	}
+	
+	public List<Workout> getAllenamenti() throws SQLException {
+		
+		List<Workout> workouts= new ArrayList<>();
+		
+		String sqlCorse=  "SELECT id, data, descrizione, durata, distanza "
+				       +  "FROM corse ";
+		
+		try(Connection connection = DatabaseConnection.getConnection()){
+			try(PreparedStatement statement = connection.prepareStatement(sqlCorse)){
+				try(ResultSet result = statement.executeQuery()){
+					while(result.next()) {
+						String id=result.getString(1);
+						LocalDate data=result.getDate("data").toLocalDate();
+						String descrizione= result.getString(3);
+						int durata= result.getInt(4);
+						double distanza=result.getDouble(5);
+						
+						RunningWorkout corsa = new RunningWorkout(descrizione, id, data, durata, distanza);
+						workouts.add(corsa);
+					} 
+				}
+			}
+		}	
+		return workouts;
+	}
 	
 }

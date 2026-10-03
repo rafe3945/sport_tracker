@@ -307,7 +307,7 @@ public class WorkoutDAO {
 		String sqlCorse=  "SELECT id, data, descrizione, durata, distanza "
 				       +  "FROM corse ";
 		
-		try(Connection connection = DatabaseConnection.getConnection()){
+			try(Connection connection = DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sqlCorse)){
 				try(ResultSet result = statement.executeQuery()){
 					while(result.next()) {
@@ -322,7 +322,68 @@ public class WorkoutDAO {
 					} 
 				}
 			}
-		}	
+		
+		
+		String sqlForza = "SELECT id, data, descrizione, durata "
+				        + "FROM allenamenti_forza ";
+		
+			try(PreparedStatement statement1 = connection.prepareStatement(sqlForza)){
+				try(ResultSet result1 = statement1.executeQuery()){
+					while(result1.next()) {
+						String id=result1.getString(1);
+						LocalDate data=result1.getDate("data").toLocalDate();
+						String descrizione= result1.getString(3);
+						int durata= result1.getInt(4);
+						
+						StrengtWorkout forza= new StrengtWorkout(descrizione, id, data, durata);
+						
+						
+						String sqlEsercizi= "SELECT id, nome "
+						          + "FROM esercizi_forza "
+						          + "WHERE allenamento_id =? ";
+						
+					try(PreparedStatement statement2 = connection.prepareStatement(sqlEsercizi)){
+						statement2.setString(1, id);
+						try(ResultSet result2= statement2.executeQuery()){
+							while(result2.next()) {
+								int esercizioId= result2.getInt("id");
+								String nome= result2.getString("nome");
+								
+								Exercise esercizio =new Exercise(nome);
+								forza.aggiungiEsercizio(esercizio);
+								
+								String sqlSerie =
+								        "SELECT ripetizioni, durata_secondi, kg, tipo "
+								      + "FROM serie_forza "
+								      + "WHERE esercizio_id = ?";
+								
+								try(PreparedStatement statement3= connection.prepareStatement(sqlSerie)) {
+								    statement3.setInt(1, esercizioId);
+								    try(ResultSet result3 = statement3.executeQuery()) {
+								        while(result3.next()) {
+
+								        	int ripetizioni = result3.getInt("ripetizioni");
+								        	int durataSecondi = result3.getInt("durata_secondi");
+								        	double kg = result3.getDouble("kg");
+								        	String tipoString = result3.getString("tipo");
+								        	
+								        	TipoSerie tipo = TipoSerie.valueOf(tipoString);
+								        	
+								       SerieWorkout serie= new SerieWorkout(ripetizioni, durataSecondi, kg, tipo);
+								       esercizio.aggiungiSerie(serie);
+								       
+								        }
+								    }
+								}
+							}
+						}
+					  }
+					workouts.add(forza);
+					}
+				}
+			}
+		}
+			
 		return workouts;
 	}
 	

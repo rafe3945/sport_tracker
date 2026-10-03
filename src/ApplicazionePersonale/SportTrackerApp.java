@@ -1,7 +1,6 @@
 package ApplicazionePersonale;
 
 import java.util.Scanner; 
-import java.util.ArrayList;
 import java.util.List;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -425,42 +424,46 @@ public class SportTrackerApp {
 	    	
 	    		//vedi allenamenti
 	    	case 3:
-	    	
-	    		if(manager.getAllenamentiTotali()==0) {
-	    			System.out.println("Non sono presenti allenamenti");
-	    		}else {
 	    			
-	    			for(Workout workout:manager.getWorkouts()) {
-	    				System.out.println("=====ALLENAMENTO=====");
-	    				if(workout.getDescrizione().isEmpty()) {
-	    				System.out.println("Descrizione: non inserita");
-	    				}
-	    				else {
-	    					System.out.println("Descrizione: "+ workout.getDescrizione());
-	    				}
-	    				System.out.println("Id: "+ workout.getId());
-	    				System.out.println("Data: " +workout.getData());
-	    				System.out.println("Durata: "+ workout.getDurata()+ " min");
-	    				
-	    				if(workout instanceof RunningWorkout) {
-	    					System.out.println("KM Percorsi: " +((RunningWorkout)workout).getDistanza());
-	    					System.out.println("Passo medio: "+((RunningWorkout)workout).getPassoMedio() );
-	    				}else if(workout instanceof StrengtWorkout) {
-	    					
-	    					for(Exercise es:((StrengtWorkout)workout).getEsercizi()) {
-	    						System.out.println("Esercizio: "+ es.getNome());
-	    						
-	    						for(SerieWorkout serie:es.getSerie()) {
-	    							System.out.println(serie);
-	    						}
-	    					}
-	    					
-	    				}
-	    			}
-	    			
-	    			
-	    		}
-	    		
+			try {
+				List<Workout> workouts = dao.getAllenamenti();
+				
+					if(workouts.size()==0) {
+						System.out.println("Non sono presenti allenamenti");
+					}else {
+						for(Workout workout:workouts) {
+		    				System.out.println("=====ALLENAMENTO=====");
+		    				if(workout.getDescrizione().isEmpty()) {
+		    				System.out.println("Descrizione: non inserita");
+		    				}
+		    				else {
+		    					System.out.println("Descrizione: "+ workout.getDescrizione());
+		    				}
+		    				System.out.println("Id: "+ workout.getId());
+		    				System.out.println("Data: " +workout.getData());
+		    				System.out.println("Durata: "+ workout.getDurata()+ " min");
+		    				
+		    				if(workout instanceof RunningWorkout) {
+		    					System.out.println("KM Percorsi: " +((RunningWorkout)workout).getDistanza());
+		    					System.out.println("Passo medio: "+((RunningWorkout)workout).getPassoMedio() );
+		    				}else if(workout instanceof StrengtWorkout) {
+		    					
+		    					for(Exercise es:((StrengtWorkout)workout).getEsercizi()) {
+		    						System.out.println("Esercizio: "+ es.getNome());
+		    						
+		    						for(SerieWorkout serie:es.getSerie()) {
+		    							System.out.println(serie);
+		    						}
+		    					}
+		    					
+		    				}
+		    			}
+		    			
+					}
+			} catch (SQLException e) {
+				System.out.println("Errore nel recupero dati dal database");
+				e.printStackTrace();
+			}
 	    		break;
 	    		//esci dall'app
 	    	case 4: 
@@ -489,6 +492,7 @@ public class SportTrackerApp {
 	    		System.out.println("Scelta non valida, riprovare perfavore\n");
 	    }
 	  }	
+	  
     }
 	
 	private static LocalDate inserisciData(Scanner scan) {
@@ -511,6 +515,7 @@ public class SportTrackerApp {
 	        }
 	    }
 	}
+	
 	private static double inserisciDouble(Scanner scan, String messaggio) {
 	    System.out.print(messaggio);
 	    String input = scan.nextLine().replace(',', '.');

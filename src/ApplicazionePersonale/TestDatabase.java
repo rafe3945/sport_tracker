@@ -12,18 +12,9 @@ public class TestDatabase {
 		Connection connection = DatabaseConnection.getConnection();
 		System.out.println("Connessione riuscita!");
 		
-		Statement statement = connection.createStatement();
-		String sql = "SELECT * FROM allenamenti";
-		ResultSet result = statement.executeQuery(sql);
 		
-		while (result.next()) {
-			System.out.println("=====ALLENAMENTO=====");
-		    System.out.println("id: "+result.getInt("id"));
-		    System.out.println("data: "+result.getDate("data"));
-		    System.out.println("descrizione: "+result.getString("descrizione"));
-		    System.out.println("durata: "+ result.getInt("durata"));
-		    System.out.println("tipo allenmaneto: "+ result.getString("tipo"));
-		}
+		
+		
 	}
 
 }

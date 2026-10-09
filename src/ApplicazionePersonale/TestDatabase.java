@@ -12,7 +12,8 @@ public class TestDatabase {
 		Connection connection = DatabaseConnection.getConnection();
 		System.out.println("Connessione riuscita!");
 		
-		
+		UserDAO dao= new UserDAO();
+		AuthService authService =new AuthService(dao);
 		
 		
 	}

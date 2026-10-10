@@ -12,9 +12,127 @@ public class SportTrackerApp {
 	public static void main(String[] args) {
 		
 	Scanner scan = new Scanner(System.in);
-		//creo il WorkoutManager
 	
-	WorkoutManager manager= new WorkoutManager();
+	UserDAO userDAO = new UserDAO();
+	AuthService authService = new AuthService(userDAO);
+	Sessione sessione = null;
+	
+	//menu di sign up e login 
+	while (sessione == null) {
+	    System.out.println("\n===== SPORT TRACKER =====");
+	    System.out.println("1. Registrati");
+	    System.out.println("2. Accedi");
+	    System.out.println("3. Esci");
+
+	    int sceltaAccesso = scan.nextInt();
+	    scan.nextLine();
+
+	    switch (sceltaAccesso) {
+	    //sign up
+	        case 1:
+	            
+	        	System.out.print("Scegli un username: ");
+	            String usernameRegistrazione = scan.nextLine();
+
+	            String passwordRegistrazione;
+	            boolean passwordCorretta = false;
+
+	            while (!passwordCorretta) {
+
+	                System.out.println("\nLa password deve:");
+	                System.out.println("- Avere almeno 8 caratteri");
+	                System.out.println("- Contenere almeno una lettera maiuscola");
+	                System.out.println("- Contenere almeno un numero");
+	                System.out.println("- Contenere almeno un carattere speciale (@, !, ?, #)");
+
+	                System.out.print("Scegli una password: ");
+	                passwordRegistrazione = scan.nextLine();
+
+	                try {
+	                    boolean registrato = authService.registra(
+	                        usernameRegistrazione,
+	                        passwordRegistrazione
+	                    );
+
+	                    if (registrato) {
+	                        System.out.println(
+	                            "Registrazione completata! Ora puoi accedere."
+	                        );
+	                        passwordCorretta = true;
+	                    } else {
+	                        System.out.println(
+	                            "Username già esistente. Scegline un altro."
+	                        );
+	                        break;
+	                    }
+
+	                } catch (IllegalArgumentException e) {
+	                    System.out.println(e.getMessage());
+
+	                } catch (SQLException e) {
+	                    System.out.println("Errore durante la registrazione.");
+	                    e.printStackTrace();
+	                    break;
+	                }
+	            }
+	            
+	            break;
+
+	            //login
+	        case 2:
+	            
+	        	  boolean continuaLogin = true;
+
+	        	    while (continuaLogin && sessione == null) {
+	        	      
+	        	    	System.out.print("Inserisci username: ");
+	        	    	String usernameLogin = scan.nextLine();
+
+	        	    	System.out.print("Inserisci password: ");
+	        	    	String passwordLogin = scan.nextLine();
+
+	        	    	try {
+	        	    	    if (authService.login(usernameLogin, passwordLogin)) {
+	        	    	        User utente = userDAO.trovaUtentePerUsername(usernameLogin);
+	        	    	        sessione = new Sessione(utente);
+
+	        	    	        System.out.println("Login effettuato con successo!");
+	        	    	    } else {
+	        	    	        System.out.println("Username o password errati.");
+	        	    	        System.out.println("1. Riprova");
+	        	    	        System.out.println("2. Torna al menu iniziale");
+
+	        	    	        int sceltaLogin = scan.nextInt();
+	        	    	        scan.nextLine();
+
+	        	    	        while (sceltaLogin != 1 && sceltaLogin != 2) {
+	        	    	            System.out.println("Scelta non valida.Riprova:");
+	        	    	            sceltaLogin = scan.nextInt();
+	        	    	            scan.nextLine();
+	        	    	        }
+
+	        	    	        if (sceltaLogin == 2) {
+	        	    	            continuaLogin = false;
+	        	    	        }
+	        	    	    }
+	        	    	} catch (SQLException e) {
+	        	    	    System.out.println("Errore durante il login.");
+	        	    	    e.printStackTrace();
+	        	    	}
+	        	    }
+	            break;
+
+	        case 3:
+	            System.out.println("Chiusura di SportTracker.");
+	            scan.close();
+	            return;
+
+	        default:
+	            System.out.println("Scelta non valida.");
+	    }
+	}
+	
+	
 	WorkoutDAO dao= new WorkoutDAO();
 	
 		//creo il menu iniziale
@@ -48,8 +166,7 @@ public class SportTrackerApp {
 	    		case 1:
 	    			scan.nextLine();
 	    			
-	    			System.out.print("Inserisci l'id con cui memorizzare l'allenamento");
-	    			String id=scan.nextLine();
+	    			String id = java.util.UUID.randomUUID().toString();
 	    			
 	    			System.out.println("Inserisci la descrizione dell'allenamento,altrimenti lasciare vuoto");
 	    			String descrizione=scan.nextLine();
@@ -64,8 +181,8 @@ public class SportTrackerApp {
 	    			
 	    			RunningWorkout corsa=new RunningWorkout(descrizione,id,data,durata,distanza);
 	    			try {
-	    			    dao.save(corsa);
-	    			    manager.aggiungiWorkout(corsa);
+	    			    dao.save(corsa, sessione.getUtente().getId());
+	    			   
 		    			System.out.println("✓ Corsa aggiunta con successo!\n");
 	    			} catch (SQLException e) {
 	    			    System.out.println("Errore durante il salvataggio nel database.");
@@ -79,8 +196,7 @@ public class SportTrackerApp {
 
 	    		    scan.nextLine();
 
-	    		    System.out.print("Inserisci l'id con cui memorizzare l'allenamento: ");
-	    		    String id1 = scan.nextLine();
+	    		    String id1 = java.util.UUID.randomUUID().toString();
 	    		    
 	    		    System.out.println("Inserisci la descrizione dell'allenamento,altrimenti lasciare vuoto");
 	    		    String descrizione1=scan.nextLine();
@@ -242,8 +358,7 @@ public class SportTrackerApp {
 	    		    }
 	    		    
 	    		    try {
-						dao.save(forza);
-						 manager.aggiungiWorkout(forza);
+						dao.save(forza, sessione.getUtente().getId());
 			    		    System.out.println("Allenamento di forza aggiunto con successo!");
 					} catch (SQLException e) {
 						System.out.println("Errore duranrte il salvataggio nel database");
@@ -281,17 +396,17 @@ public class SportTrackerApp {
 	    	        	//stats corsa
 	    	            case 1:
 						try {
-							int numeroCorse = dao.getNumeroCorse();
+							int numeroCorse = dao.getNumeroCorse(sessione.getUtente().getId());
 							
 							if(numeroCorse==0) {
 	    	            		System.out.println("Attualmente non sono presenti allenamenti di corsa.");
 	    	            	}else {
 	    	            	System.out.println("Hai effettuato: "+ numeroCorse + " corse");	
-	    	            	System.out.println("Hai corso un totale di: "+ dao.getKmTotali() + " km");
+	    	            	System.out.println("Hai corso un totale di: "+ dao.getKmTotali(sessione.getUtente().getId()) + " km");
 	    	            	
-		    	        	int tempoTotaleCorsa=dao.getTempoTotaleCorsa();
+		    	        	int tempoTotaleCorsa=dao.getTempoTotaleCorsa(sessione.getUtente().getId());
 	    	            	System.out.printf("Hai corso un totale di: %d minuti, che corrispondono a %.2f ore%n", tempoTotaleCorsa,(double) tempoTotaleCorsa / 60);
-	    	            	System.out.printf("Passo medio totale: %.2f min/km%n", dao.getPassoMedioTotale());
+	    	            	System.out.printf("Passo medio totale: %.2f min/km%n", dao.getPassoMedioTotale(sessione.getUtente().getId()));
 	    	            	}
 						} catch (SQLException e) {
 							System.out.println("Errore recupero dati nel database");
@@ -302,7 +417,7 @@ public class SportTrackerApp {
 	    	            // statistiche forza
 	    	            case 2:
 						try {
-							int allenamentiForza= dao.getNumeroAllenamentiForza();
+							int allenamentiForza= dao.getNumeroAllenamentiForza(sessione.getUtente().getId());
 						
 	    	            	if(allenamentiForza==0) {
 	    	            		System.out.println("Non sono presenti allenamenti");
@@ -325,18 +440,18 @@ public class SportTrackerApp {
 	    		    	        	System.out.println("=====STATISTICHE GENERALI=====");
 	    		    	        	System.out.println("Hai effettutato un numero di "+ allenamentiForza +" allenamenti");
 	    		    	        	
-	    		    	        	int tempoTotaleForza=dao.getTempoTotaleForza();
+	    		    	        	int tempoTotaleForza=dao.getTempoTotaleForza(sessione.getUtente().getId());
 	    		    	        	System.out.printf("Ti sei allenato per un totale di: %d minuti, che corrispondono a %.2f ore%n", tempoTotaleForza,(double) tempoTotaleForza / 60);
-	    		    	        	System.out.println("Hai svolto un totale di " + dao.getNumeroEserciziForza()+ " esercizi");
+	    		    	        	System.out.println("Hai svolto un totale di " + dao.getNumeroEserciziForza(sessione.getUtente().getId())+ " esercizi");
 	    		    	        	
 	    		    	        	
 	    		    	        	//String esercizioPiuRep = manager.getEsercizioPiuRep();
-	    		    	        	String esercizioPiuRep= dao.getEsercizioPiuRep();
+	    		    	        	String esercizioPiuRep= dao.getEsercizioPiuRep(sessione.getUtente().getId());
 	    		    	        	
 	    		    	        	if(esercizioPiuRep==null) {
 	    		    	        		System.out.println("Non ci sono esercizi con ripetizioni.");
 	    		    	        	}else {
-	    		    	        	System.out.println("L'esercizio con più ripetizioni è: "+ esercizioPiuRep+" con "+ dao.getMaxRipetizioni()+ " ripetizioni\n" );
+	    		    	        	System.out.println("L'esercizio con più ripetizioni è: "+ esercizioPiuRep+" con "+ dao.getMaxRipetizioni(sessione.getUtente().getId())+ " ripetizioni\n" );
 	    		    	        	}
 	    		    	        	break;
 	    		    	        
@@ -348,7 +463,7 @@ public class SportTrackerApp {
 	    		    	        	System.out.println("Inserisci il nome dell'esercizio di cui vuoi vedere le statistiche");
 	    		    	        	String nomeEsercizioUtente=scan.nextLine();
 	    		    	        	
-	    		    	        	int numeroSerie=dao.getNumeroSerieEsercizio(nomeEsercizioUtente);
+	    		    	        	int numeroSerie=dao.getNumeroSerieEsercizio(nomeEsercizioUtente,sessione.getUtente().getId());
 	    		    	        	if(nomeEsercizioUtente.isBlank()) {
 	    		    	        		System.out.println("Il nome dell'esercizio non può essere vuoto.");
 	    		    	        	}
@@ -358,10 +473,10 @@ public class SportTrackerApp {
 	    		    	        		System.out.println("Esercizio: "+ nomeEsercizioUtente);
 	    		    	        		
 	    		    	        	    //int ripetizioniTotali = manager.getNumeroRipetizioniEsercizio(nomeEsercizioUtente);
-	    		    	        		int ripetizioniTotali=dao.getNumeroRipetizioniEsercizio(nomeEsercizioUtente);
+	    		    	        		int ripetizioniTotali=dao.getNumeroRipetizioniEsercizio(nomeEsercizioUtente,sessione.getUtente().getId());
 	    		    	        		
 	    		    	        	    //int tempoTotale = manager.getTempoTotaleEsercizio(nomeEsercizioUtente);
-	    		    	        		int tempoTotale = dao.getTempoTotaleEsercizio(nomeEsercizioUtente);
+	    		    	        		int tempoTotale = dao.getTempoTotaleEsercizio(nomeEsercizioUtente,sessione.getUtente().getId());
 	    		    	        		System.out.println("Numero di serie totali: " +numeroSerie);
 	    		    	        		
 	    		    	        		if(ripetizioniTotali>0) {
@@ -426,7 +541,7 @@ public class SportTrackerApp {
 	    	case 3:
 	    			
 			try {
-				List<Workout> workouts = dao.getAllenamenti();
+				List<Workout> workouts = dao.getAllenamenti(sessione.getUtente().getId());
 				
 					if(workouts.size()==0) {
 						System.out.println("Non sono presenti allenamenti");

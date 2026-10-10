@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class WorkoutDAO {
 
-	public void save(Workout workout) throws SQLException {
+	public void save(Workout workout, int utenteId) throws SQLException {
 		
 		if (workout == null) {
 	        throw new IllegalArgumentException("Workout non può essere vuoto");
@@ -20,7 +20,7 @@ public class WorkoutDAO {
 			 RunningWorkout corsa = (RunningWorkout) workout;
 
 		        try(Connection connection= DatabaseConnection.getConnection()) {
-		        	String sql= "INSERT INTO corse(id, data, descrizione, durata, distanza) VALUES(?, ?, ?, ?, ?)";
+		        	String sql= "INSERT INTO corse(id, data, descrizione, durata, distanza, utente_id) VALUES(?, ?, ?, ?, ?, ?)";
 		        	try(PreparedStatement statement= connection.prepareStatement(sql)){
 		        	
 		        	statement.setString(1, corsa.getId());
@@ -28,6 +28,7 @@ public class WorkoutDAO {
 		        	statement.setString(3, corsa.getDescrizione());
 		        	statement.setInt(4, corsa.getDurata());
 		        	statement.setDouble(5, corsa.getDistanza());
+		        	statement.setInt(6, utenteId);
 		        	
 		        	statement.executeUpdate();
 		        	}
@@ -40,13 +41,14 @@ public class WorkoutDAO {
 		     	try(Connection connection =DatabaseConnection.getConnection()){
 		     		try {
 		     		connection.setAutoCommit(false);
-		     		String sql="INSERT INTO allenamenti_forza(id, data, descrizione, durata) VALUES(?, ?, ?, ?)";
+		     		String sql="INSERT INTO allenamenti_forza(id, data, descrizione, durata, utente_id) VALUES(?, ?, ?, ?,?)";
 		     		try(PreparedStatement statement= connection.prepareStatement(sql)){
 		     		
 		     		statement.setString(1, forza.getId());
 		     		statement.setDate(2, java.sql.Date.valueOf(forza.getData()));
 		     		statement.setString(3, forza.getDescrizione());
 		     		statement.setInt(4, forza.getDurata());
+		     		statement.setInt(5, utenteId);
 		     		
 		     		statement.executeUpdate();
 		     		}
@@ -95,10 +97,11 @@ public class WorkoutDAO {
 		    }
 	}
 	
-	public int getNumeroCorse() throws SQLException{
-		String sql= "SELECT COUNT(*) FROM corse ";
+	public int getNumeroCorse(int utenteId) throws SQLException{
+		String sql= "SELECT COUNT(*) FROM corse WHERE utente_id=? ";
 		try(Connection connection=DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				statement.setInt(1, utenteId);
 				try(ResultSet result= statement.executeQuery()){
 					result.next();
 					return result.getInt(1);
@@ -107,10 +110,11 @@ public class WorkoutDAO {
 		}
 	}
 	
-	public double getKmTotali() throws SQLException {
-		String sql ="SELECT SUM(distanza) FROM corse";
+	public double getKmTotali(int utenteId) throws SQLException {
+		String sql ="SELECT SUM(distanza) FROM corse WHERE utente_id=? ";
 		try(Connection connection = DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				statement.setInt(1, utenteId);
 				try(ResultSet result = statement.executeQuery()){
 					result.next();
 					return result.getDouble(1);
@@ -119,11 +123,12 @@ public class WorkoutDAO {
 		}
 	}
 	
-	public int getTempoTotaleCorsa() throws SQLException {
-		String sql="SELECT SUM(durata) FROM corse";
+	public int getTempoTotaleCorsa(int utenteId) throws SQLException {
+		String sql="SELECT SUM(durata) FROM corse WHERE utente_id=? ";
 		
 		try(Connection connection = DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				statement.setInt(1,utenteId);
 				try(ResultSet result = statement.executeQuery()){
 					result.next();
 					return result.getInt(1);
@@ -132,11 +137,14 @@ public class WorkoutDAO {
 		}
 	}
 	
-	public double getPassoMedioTotale() throws SQLException{
-		String sql= "SELECT SUM(durata) / SUM(distanza) FROM corse";
+	public double getPassoMedioTotale(int utenteId) throws SQLException{
+		String sql = "SELECT SUM(durata) / SUM(distanza) "
+		           + "FROM corse "
+		           + "WHERE utente_id = ?";
 		
 		try(Connection connection = DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				statement.setInt(1, utenteId);
 				try(ResultSet result = statement.executeQuery()){
 					result.next();
 					return result.getDouble(1);
@@ -145,11 +153,12 @@ public class WorkoutDAO {
 		}
 	}
 	
-	public int getNumeroAllenamentiForza() throws SQLException {
-		String sql="SELECT COUNT(*) FROM allenamenti_forza";
+	public int getNumeroAllenamentiForza(int utenteId) throws SQLException {
+		String sql="SELECT COUNT(*) FROM allenamenti_forza WHERE utente_id=? ";
 		
 		try(Connection connection = DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				statement.setInt(1, utenteId);
 				try(ResultSet result = statement.executeQuery()){
 					result.next();
 					return result.getInt(1);
@@ -158,11 +167,12 @@ public class WorkoutDAO {
 		}
 	}
 	
-	public int getTempoTotaleForza() throws SQLException{
-		String sql="SELECT SUM(durata) FROM allenamenti_forza";
+	public int getTempoTotaleForza(int utenteId) throws SQLException{
+		String sql="SELECT SUM(durata) FROM allenamenti_forza WHERE utente_id=? ";
 		
 		try(Connection connection = DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				statement.setInt(1, utenteId);
 				try(ResultSet result = statement.executeQuery()){
 					result.next();
 					return result.getInt(1);
@@ -171,12 +181,16 @@ public class WorkoutDAO {
 		}
 	}
 	
-	public int getNumeroEserciziForza() throws SQLException{
+	public int getNumeroEserciziForza(int utenteId) throws SQLException{
 		
-		String sql="SELECT COUNT(*) FROM esercizi_forza";
+		String sql=  "SELECT COUNT(*) "
+		           + "FROM esercizi_forza esFor "
+		           + "JOIN allenamenti_forza allFor ON esFor.allenamento_id = allFor.id "
+		           + "WHERE allFor.utente_id = ?";
 		
 		try(Connection connection = DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sql)){
+				statement.setInt(1, utenteId);
 				try(ResultSet result = statement.executeQuery()){
 					result.next();
 					return result.getInt(1);
@@ -185,18 +199,20 @@ public class WorkoutDAO {
 		}
 	}
 	
-	public String getEsercizioPiuRep() throws SQLException{
+	public String getEsercizioPiuRep(int utenteId) throws SQLException{
 		
-		String sql= "SELECT esercizi_forza.nome, SUM(serie_forza.ripetizioni) "
-				+ "FROM esercizi_forza "
-				+ "JOIN serie_forza "
-				+ "ON esercizi_forza.id=serie_forza.esercizio_id "
-				+ "GROUP BY esercizi_forza.nome "
-				+ "ORDER BY SUM(serie_forza.ripetizioni) DESC "
+		String sql= "SELECT esFor.nome, SUM(serFor.ripetizioni) "
+				+ "FROM esercizi_forza esFor "
+				+ "JOIN serie_forza serFor ON esFor.id= serFor.esercizio_id "
+				+ "JOIN allenamenti_forza allFor ON esFor.allenamento_id = allFor.id "
+				+ "WHERE allFor.utente_id = ? "
+				+ "GROUP BY esFor.nome "
+				+ "ORDER BY SUM(serFor.ripetizioni) DESC "
 				+ "LIMIT 1 ";
 			
 			try(Connection connection= DatabaseConnection.getConnection()){
 				try(PreparedStatement statement=connection.prepareStatement(sql)){
+					statement.setInt(1, utenteId);
 					try(ResultSet result= statement.executeQuery()){
 						if(result.next()) {
 							return result.getString(1);
@@ -209,16 +225,19 @@ public class WorkoutDAO {
 	    }
 	
 	
-	public int getMaxRipetizioni() throws SQLException {
-		String sql= "SELECT esercizi_forza.nome, SUM(serie_forza.ripetizioni) "
-				+ "FROM esercizi_forza "
-				+ "JOIN serie_forza "
-				+ "ON esercizi_forza.id=serie_forza.esercizio_id "
-				+ "GROUP BY esercizi_forza.nome "
-				+ "ORDER BY SUM(serie_forza.ripetizioni) DESC "
+	public int getMaxRipetizioni(int utenteId) throws SQLException {
+		String sql= "SELECT esFor.nome, SUM(serFor.ripetizioni) "
+				+ "FROM esercizi_forza esFor "
+				+ "JOIN serie_forza serFor ON esFor.id= serFor.esercizio_id "
+				+ "JOIN allenamenti_forza allFor ON esFor.allenamento_id = allFor.id "
+				+ "WHERE allFor.utente_id = ? "
+				+ "GROUP BY esFor.nome "
+				+ "ORDER BY SUM(serFor.ripetizioni) DESC "
 				+ "LIMIT 1 ";
 		try(Connection connection= DatabaseConnection.getConnection()){
 			try(PreparedStatement statement=connection.prepareStatement(sql)){
+				statement.setInt(1, utenteId);
+				
 				try(ResultSet result= statement.executeQuery()){
 					 if(result.next()) {
 						return result.getInt(2);
@@ -230,17 +249,18 @@ public class WorkoutDAO {
 		}	
 	}
 	
-	public int getNumeroSerieEsercizio(String nomeEs) throws SQLException {
+	public int getNumeroSerieEsercizio(String nomeEs, int utenteId) throws SQLException {
 		
 		String sql= "SELECT COUNT(*) "
-				+   "FROM esercizi_forza "
-				+   "JOIN serie_forza "
-				+   "ON esercizi_forza.id=serie_forza.esercizio_id "
-				+   "WHERE esercizi_forza.nome = ? ";
+		           + "FROM esercizi_forza esFor "
+		           + "JOIN serie_forza serFor ON esFor.id = serFor.esercizio_id "
+		           + "JOIN allenamenti_forza allFor ON esFor.allenamento_id = allFor.id "
+		           + "WHERE esFor.nome = ? AND allFor.utente_id = ?";
 		
 		try(Connection connection= DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sql)){
 				statement.setString(1, nomeEs);
+				statement.setInt(2, utenteId);
 				try(ResultSet result= statement.executeQuery()){
 					if(result.next()) {
 					return result.getInt(1);
@@ -252,22 +272,26 @@ public class WorkoutDAO {
 		}	
 	}
 	
-	public int getNumeroRipetizioniEsercizio(String nomeEs) throws SQLException {
+	public int getNumeroRipetizioniEsercizio(String nomeEs, int utenteId) throws SQLException {
 		
 		if(nomeEs == null || nomeEs.isBlank()) {
 		    throw new IllegalArgumentException("Il nome dell'esercizio non può essere vuoto");
 		}
 		
-		String sql= "SELECT SUM(serie_forza.ripetizioni) "
-				+   "FROM esercizi_forza "
-				+   "JOIN serie_forza "
-				+   "ON esercizi_forza.id= serie_forza.esercizio_id "
-				+   "WHERE esercizi_forza.nome= ? "
-				+   "AND serie_forza.tipo IN ('RIPETIZIONI', 'RIPETIZIONI_CON_TEMPO') ";
+		String sql = "SELECT SUM(serFor.ripetizioni) "
+		           + "FROM esercizi_forza esFor "
+		           + "JOIN serie_forza serFor "
+		           + "ON esFor.id = serFor.esercizio_id "
+		           + "JOIN allenamenti_forza allFor "
+		           + "ON esFor.allenamento_id = allFor.id "
+		           + "WHERE esFor.nome = ? "
+		           + "AND allFor.utente_id = ? "
+		           + "AND serFor.tipo IN ('RIPETIZIONI', 'RIPETIZIONI_CON_TEMPO') ";
 		
 		try(Connection connection = DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sql)){
 				statement.setString(1, nomeEs);
+				statement.setInt(2, utenteId);
 				try(ResultSet result = statement.executeQuery()){
 					result.next(); 
 					return result.getInt(1);
@@ -276,22 +300,26 @@ public class WorkoutDAO {
 		}	
 	}
 	
-	public int getTempoTotaleEsercizio(String nomeEs) throws SQLException {
+	public int getTempoTotaleEsercizio(String nomeEs,int utenteId) throws SQLException {
 		
 		if(nomeEs == null || nomeEs.isBlank()) {
 		    throw new IllegalArgumentException("Il nome dell'esercizio non può essere vuoto");
 		}
 		
-		String sql= "SELECT SUM(serie_forza.durata_secondi) "
-				+   "FROM esercizi_forza "
-				+   "JOIN serie_forza "
-				+   "ON esercizi_forza.id= serie_forza.esercizio_id "
-				+   "WHERE esercizi_forza.nome= ? "
-				+   "AND serie_forza.tipo= 'TEMPO' ";
+		String sql= "SELECT SUM(serFor.durata_secondi) "
+				+   "FROM esercizi_forza esFor "
+				+   "JOIN serie_forza serFor "
+				+   "ON esFor.id= serFor.esercizio_id "
+				+   "JOIN allenamenti_forza allFor "
+		        +   "ON esFor.allenamento_id = allFor.id "
+				+   "WHERE esFor.nome= ? "
+				+   "AND allFor.utente_id=? "
+				+   "AND serFor.tipo= 'TEMPO' ";
 		
 		try(Connection connection = DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sql)){
 				statement.setString(1, nomeEs);
+				statement.setInt(2, utenteId);
 				try(ResultSet result = statement.executeQuery()){
 					result.next(); 
 					return result.getInt(1);
@@ -300,15 +328,17 @@ public class WorkoutDAO {
 		}	
 	}
 	
-	public List<Workout> getAllenamenti() throws SQLException {
+	public List<Workout> getAllenamenti(int utenteId) throws SQLException {
 		
 		List<Workout> workouts= new ArrayList<>();
 		
 		String sqlCorse=  "SELECT id, data, descrizione, durata, distanza "
-				       +  "FROM corse ";
+				       +  "FROM corse "
+				       +  "WHERE utente_id= ? ";
 		
 			try(Connection connection = DatabaseConnection.getConnection()){
 			try(PreparedStatement statement = connection.prepareStatement(sqlCorse)){
+				statement.setInt(1, utenteId);
 				try(ResultSet result = statement.executeQuery()){
 					while(result.next()) {
 						String id=result.getString(1);
@@ -325,9 +355,11 @@ public class WorkoutDAO {
 		
 		
 		String sqlForza = "SELECT id, data, descrizione, durata "
-				        + "FROM allenamenti_forza ";
+				        + "FROM allenamenti_forza "
+				        + "WHERE utente_id= ? ";
 		
 			try(PreparedStatement statement1 = connection.prepareStatement(sqlForza)){
+				statement1.setInt(1, utenteId);
 				try(ResultSet result1 = statement1.executeQuery()){
 					while(result1.next()) {
 						String id=result1.getString(1);
